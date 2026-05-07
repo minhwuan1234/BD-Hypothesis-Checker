@@ -318,6 +318,18 @@
     .btn-submit:hover:not(:disabled) { background: var(--accent-h); }
     .btn-submit:active:not(:disabled) { transform: scale(.998); }
     .btn-submit:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-test-n8n {
+      margin-top: 16px;
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--border-h);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      padding: 10px 16px;
+      transition: all .12s;
+    }
+    .btn-test-n8n:hover { border-color: var(--accent); color: var(--accent); }
 
     /* ── SEND BAR ── */
     .send-bar {
@@ -389,6 +401,10 @@
       <label class="field-label">LinkedIn cá nhân</label>
       <input type="text" id="src-li-person" placeholder="https://linkedin.com/in/..." />
     </div>
+
+    <button class="btn-test-n8n" id="btn-test-n8n" onclick="testN8NOnly()">
+      Test gửi webhook →
+    </button>
   </div>
 
   <!-- ── SECTION 1: TARGET & CONTEXT ── -->
@@ -502,7 +518,16 @@
 
 </div>
 
-<script src="config.js"></script>
+<script>
+// Config được inject tự động bởi GitHub Actions
+// KHÔNG sửa trực tiếp file này — sửa qua GitHub Secrets
+const CONFIG = {
+  OPENAI_API_KEY:  "__OPENAI_API_KEY__",
+  OPENAI_MODEL:    "gpt-4o-mini",
+  WORKER_URL:      "",
+  N8N_WEBHOOK_URL: "__N8N_WEBHOOK_URL__",
+};
+</script>
 <script>
 // ================================================================
 //  CHECKLIST PROMPTS — tùy chỉnh tại đây
@@ -806,6 +831,17 @@ function showToast(msg, type = "success") {
 // ================================================================
 //  TRIGGER N8N — gửi 3 URLs để scrape
 // ================================================================
+async function testN8NOnly() {
+  const btn = document.getElementById("btn-test-n8n");
+  btn.textContent = "Đang gửi...";
+  btn.disabled = true;
+
+  await triggerN8N();
+
+  btn.textContent = "Test gửi webhook →";
+  btn.disabled = false;
+}
+
 async function triggerN8N() {
   const webhookUrl = (typeof CONFIG !== "undefined" && CONFIG.N8N_WEBHOOK_URL)
     ? CONFIG.N8N_WEBHOOK_URL : null;
@@ -835,8 +871,10 @@ async function triggerN8N() {
     });
     if (!res.ok) throw new Error("HTTP " + res.status);
     console.log("[n8n] Triggered OK", payload);
+    showToast("✓ Đã gửi webhook sang n8n");
   } catch (err) {
     console.warn("[n8n] Trigger failed:", err.message);
+    showToast("n8n lỗi: " + err.message + " — Kiểm tra CORS trong n8n", "error");
     // Không alert user — n8n fail không block judgment flow
   }
 }
