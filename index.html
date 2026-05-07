@@ -3,360 +3,844 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Daily Standup</title>
+  <title>Hypothesis Card</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Freeman&family=Rethink+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    button { font: inherit; cursor: pointer; background: none; border: none; }
+
+    :root {
+      --bg:         #111110;
+      --card:       #181816;
+      --input-bg:   #1c1c1a;
+      --border:     #272724;
+      --border-h:   #353532;
+
+      --text:       #e2e0d6;
+      --muted:      #6a6860;
+      --dim:        #3c3b37;
+
+      --accent:     #b8f53c;
+      --accent-h:   #c9ff50;
+      --accent-on:  #0f0f0d;
+
+      --ai-bg:      #141810;
+      --ai-border:  #202c14;
+      --ai-green:   #7ab428;
+
+      --jbg:        #111410;
+      --jborder:    #1c2812;
+      --jleft:      #5a8c18;
+      --jlabel:     #6a9e20;
+      --jtext:      #a8c878;
+
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 52px 28px 60px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 32px 32px;
+      margin-bottom: 14px;
+    }
+
+    .card-eyebrow {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 26px;
+    }
+
+    /* ── FIELD ── */
+    .field { margin-bottom: 28px; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+
+    .field-hint {
+      font-size: 12.5px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    /* ── INPUT / TEXTAREA ── */
+    input[type="text"],
+    textarea {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.65;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color .15s;
+      resize: vertical;
+    }
+    input[type="text"]::placeholder,
+    textarea::placeholder { color: var(--dim); }
+    input[type="text"]:focus,
+    textarea:focus { border-color: var(--border-h); }
+    textarea { min-height: 100px; }
+    textarea.tall { min-height: 124px; }
+
+    /* ── TAGS ── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .tag {
+      padding: 6px 17px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      transition: all .12s;
+      user-select: none;
+    }
+    .tag:hover { border-color: var(--border-h); color: var(--text); }
+    .tag.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-on);
+      font-weight: 500;
+    }
+
+    /* ── AI CHALLENGE ── */
+    .ai-challenge {
+      background: var(--ai-bg);
+      border: 1px solid var(--ai-border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-top: 8px;
+    }
+    .ai-challenge-label {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--ai-green);
+      margin-bottom: 8px;
+    }
+    .ai-challenge p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── JUDGMENT BOX (inline, dưới từng field) ── */
+    .judgment {
+      display: none;
+      margin-top: 10px;
+      background: var(--jbg);
+      border: 1px solid var(--jborder);
+      border-left: 2px solid var(--jleft);
+      border-radius: 8px;
+      padding: 14px 16px;
+      animation: fadeSlide .2s ease;
+    }
+    .judgment.visible { display: block; }
+
+    .judgment-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .judgment-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--jlabel);
+    }
+    .judgment-score {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--jlabel);
+      background: #1a2810;
+      border: 1px solid var(--jborder);
+      border-radius: 4px;
+      padding: 2px 8px;
+    }
+
+    /* checklist items */
+    .judgment-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .judgment-list li {
+      display: flex;
+      gap: 10px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .j-icon {
+      flex-shrink: 0;
+      margin-top: 1px;
+      font-size: 13px;
+      width: 16px;
+    }
+    .j-pass { color: var(--ai-green); }
+    .j-fail { color: #c06040; }
+    .j-warn { color: #c09030; }
+    .j-text { color: var(--muted); }
+    .j-text strong { color: var(--jtext); font-weight: 500; }
+
+    .judgment-summary {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--jborder);
+      font-size: 12.5px;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* loading state */
+    .judgment-loading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--dim);
+      font-style: italic;
+    }
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid var(--jborder);
+      border-top-color: var(--jlabel);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SCORE ── */
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 4px;
+      margin-bottom: 12px;
+    }
+    .score-btn {
+      background: #141412;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      transition: all .12s;
+    }
+    .score-btn:hover { border-color: var(--border-h); }
+    .score-num {
+      font-family: var(--mono);
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1;
+    }
+    .score-desc {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      color: var(--dim);
+      letter-spacing: .03em;
+      text-align: center;
+    }
+    .score-btn.active { background: var(--accent); border-color: var(--accent); }
+    .score-btn.active .score-num,
+    .score-btn.active .score-desc { color: var(--accent-on); }
+    .score-feedback { font-size: 12.5px; color: var(--muted); min-height: 20px; }
+
+    /* ── SUBMIT ── */
+    .btn-submit {
+      width: 100%;
+      background: var(--accent);
+      color: var(--accent-on);
+      border-radius: 12px;
+      padding: 18px 24px;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: .01em;
+      transition: background .12s, opacity .12s, transform .08s;
+      margin-top: 4px;
+    }
+    .btn-submit:hover:not(:disabled) { background: var(--accent-h); }
+    .btn-submit:active:not(:disabled) { transform: scale(.998); }
+    .btn-submit:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── SEND BAR ── */
+    .send-bar {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .btn-submit { flex: 1; margin-top: 0; }
+    .btn-lark {
+      background: #1a5cff;
+      color: #fff;
+      border-radius: 12px;
+      padding: 18px 28px;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: .01em;
+      transition: background .12s, opacity .12s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-lark:hover:not(:disabled) { background: #2d6fff; }
+    .btn-lark:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1e2a12;
+      border: 1px solid var(--jborder);
+      color: var(--jtext);
+      font-size: 13.5px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s, transform .2s;
+      z-index: 999;
+      white-space: nowrap;
+    }
+    .toast.error { background: #2a1212; border-color: #4a2020; color: #c08080; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+
+  </style>
 </head>
 <body>
+<div class="page">
 
-  <div class="page-wrapper">
-    <div class="card">
+  <!-- ── SECTION 0: RESEARCH SOURCES ── -->
+  <div class="card">
+    <div class="card-eyebrow">Research Sources</div>
 
-      <!-- LEFT PANEL -->
-      <div class="left-panel">
-        <div class="hero-gif"></div>
-        <div class="hero-blur"></div>
-        <div class="quote-overlay">
-          <span class="quote-mark">"</span>
-          <p class="quote-text" id="daily-quote"></p>
-        </div>
-      </div>
+    <div class="field">
+      <label class="field-label">Website công ty</label>
+      <input type="text" id="src-website" placeholder="https://company.com" />
+    </div>
 
-      <!-- RIGHT PANEL -->
-      <div class="right-panel">
+    <div class="field">
+      <label class="field-label">LinkedIn công ty</label>
+      <input type="text" id="src-li-company" placeholder="https://linkedin.com/company/..." />
+    </div>
 
-        <div id="state-loading" class="state-box">
-          <div class="spinner"></div>
-          <p>Đang tải task của bạn...</p>
-        </div>
-
-        <div id="state-error" class="state-box" style="display:none;">
-          <p class="state-icon">⚠️</p>
-          <p id="error-msg">Không tìm thấy task.</p>
-        </div>
-
-        <div id="state-success" class="state-box" style="display:none;">
-          <p class="state-icon">✅</p>
-          <p>Standup của bạn đã được ghi nhận!</p>
-          <p class="state-sub">Cảm ơn bạn đã update hôm nay 🙌</p>
-        </div>
-
-        <div id="state-form" style="display:none; flex-direction:column; gap:32px; width:100%;">
-
-          <div class="form-header">
-            <div class="title-row">
-              <div class="gap-8">
-                <h1 class="form-title">Daily Standup<span class="spark">✦</span></h1>
-                <p class="form-subtitle">Checkin hôm nay — <span id="today-label"></span></p>
-              </div>
-              <div class="rocket-icon">🚀</div>
-            </div>
-          </div>
-
-          <div class="form-body">
-
-            <!-- TASK 1 -->
-            <div class="field-group">
-              <label class="field-label">Task 1 <span class="badge-due" id="due1"></span></label>
-              <input class="field-input is-autofilled" id="task1-title" type="text" readonly />
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">Task 1 Progress</label>
-              <div class="progress-picker" id="picker1" data-value="">
-                <button class="progress-btn" data-val="0">0%</button>
-                <button class="progress-btn" data-val="10">10%</button>
-                <button class="progress-btn" data-val="20">20%</button>
-                <button class="progress-btn" data-val="30">30%</button>
-                <button class="progress-btn" data-val="40">40%</button>
-                <button class="progress-btn" data-val="50">50%</button>
-                <button class="progress-btn" data-val="60">60%</button>
-                <button class="progress-btn" data-val="70">70%</button>
-                <button class="progress-btn" data-val="80">80%</button>
-                <button class="progress-btn" data-val="90">90%</button>
-                <button class="progress-btn is-done" data-val="100">100%</button>
-              </div>
-              <div class="progress-track-wrap">
-                <div class="progress-track"><div class="progress-fill" id="fill1"></div></div>
-                <span class="progress-value-label" id="label1">—</span>
-              </div>
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">Nay tốn nhiều time cho task này khum</label>
-              <div class="select-wrapper">
-                <select class="field-select" id="time-select1">
-                  <option value="">-- Chọn thời gian --</option>
-                  <option value="0.5">0.5h</option><option value="1">1h</option>
-                  <option value="1.5">1.5h</option><option value="2">2h</option>
-                  <option value="2.5">2.5h</option><option value="3">3h</option>
-                  <option value="3.5">3.5h</option><option value="4">4h</option>
-                  <option value="4.5">4.5h</option><option value="5">5h</option>
-                  <option value="5.5">5.5h</option><option value="6">6h</option>
-                  <option value="6.5">6.5h</option><option value="7">7h</option>
-                  <option value="7.5">7.5h</option><option value="8">8h</option>
-                </select>
-                <span class="select-arrow">&#8964;</span>
-              </div>
-            </div>
-
-            <!-- TASK 2 -->
-            <div class="field-group" id="group-task2" style="display:none;">
-              <label class="field-label">Task 2 <span class="badge-due" id="due2"></span></label>
-              <input class="field-input is-autofilled" id="task2-title" type="text" readonly />
-            </div>
-
-            <div class="field-group" id="group-prog2" style="display:none;">
-              <label class="field-label">Task 2 Progress</label>
-              <div class="progress-picker" id="picker2" data-value="">
-                <button class="progress-btn" data-val="0">0%</button>
-                <button class="progress-btn" data-val="10">10%</button>
-                <button class="progress-btn" data-val="20">20%</button>
-                <button class="progress-btn" data-val="30">30%</button>
-                <button class="progress-btn" data-val="40">40%</button>
-                <button class="progress-btn" data-val="50">50%</button>
-                <button class="progress-btn" data-val="60">60%</button>
-                <button class="progress-btn" data-val="70">70%</button>
-                <button class="progress-btn" data-val="80">80%</button>
-                <button class="progress-btn" data-val="90">90%</button>
-                <button class="progress-btn is-done" data-val="100">100%</button>
-              </div>
-              <div class="progress-track-wrap">
-                <div class="progress-track"><div class="progress-fill" id="fill2"></div></div>
-                <span class="progress-value-label" id="label2">—</span>
-              </div>
-            </div>
-
-            <div class="field-group" id="group-time2" style="display:none;">
-              <label class="field-label">Task này thì seo</label>
-              <div class="select-wrapper">
-                <select class="field-select" id="time-select2">
-                  <option value="">-- Chọn thời gian --</option>
-                  <option value="0.5">0.5h</option><option value="1">1h</option>
-                  <option value="1.5">1.5h</option><option value="2">2h</option>
-                  <option value="2.5">2.5h</option><option value="3">3h</option>
-                  <option value="3.5">3.5h</option><option value="4">4h</option>
-                  <option value="4.5">4.5h</option><option value="5">5h</option>
-                  <option value="5.5">5.5h</option><option value="6">6h</option>
-                  <option value="6.5">6.5h</option><option value="7">7h</option>
-                  <option value="7.5">7.5h</option><option value="8">8h</option>
-                </select>
-                <span class="select-arrow">&#8964;</span>
-              </div>
-            </div>
-
-            <!-- MESSAGE -->
-            <div class="field-group">
-              <label class="field-label">Hôm nay có phát sinh thêm task nào ngoài lịch hem (VD: sửa feedback của khách cho task A, lên guideline cho task B,...)? Có thì note cho chị thời gian nhó hihi</label>
-              <textarea class="field-textarea" id="message" placeholder="Nhập task phát sinh nếu có nhé..."></textarea>
-            </div>
-
-            <button class="submit-btn" id="submit-btn" type="button">Submit</button>
-
-          </div>
-        </div>
-
-      </div>
+    <div class="field" style="margin-bottom:0">
+      <label class="field-label">LinkedIn cá nhân</label>
+      <input type="text" id="src-li-person" placeholder="https://linkedin.com/in/..." />
     </div>
   </div>
 
-  <script>
-  const QUOTES = [
-    "I heard this story about a fish. He swims up to this older fish and says, I'm trying to find this thing they call the ocean. The ocean? says the older fish. That's what you're in right now. This? says the young fish. This is water. What I want is the ocean.",
-    "I think I have this thing where everybody has to think I'm the greatest. And if they aren't completely knocked out and dazzled and slightly intimidated by me, I don't feel good about myself.",
-    "At the end of the day, it's not about what you have or even what you've accomplished. It's about who you've lifted up, who you've made better",
-    "Some people can't believe in themselves until someone else believes in them first.",
-    "Love is the one thing we're capable of perceiving that transcends dimensions of time and space",
-    "Not anyone can become a great artist, but a great artist can come from anywhere."
+  <!-- ── SECTION 1: TARGET & CONTEXT ── -->
+  <div class="card">
+    <div class="card-eyebrow">Target &amp; Context</div>
+
+    <div class="field">
+      <label class="field-label">Tệp / Segment đang target</label>
+      <div class="tags">
+        <button class="tag" onclick="toggleTag(this)">Startup founder</button>
+        <button class="tag" onclick="toggleTag(this)">L&amp;D manager</button>
+        <button class="tag" onclick="toggleTag(this)">HR director</button>
+        <button class="tag" onclick="toggleTag(this)">Training agency</button>
+        <button class="tag" onclick="toggleTag(this)">Corporate</button>
+      </div>
+      <input type="text" id="segment-custom" placeholder="Hoặc gõ tệp khác..." />
+    </div>
+
+    <div class="field">
+      <label class="field-label">Contact point cụ thể (title / role)</label>
+      <input type="text" id="contact-point" placeholder="VD: Head of L&D tại công ty edtech Series B" />
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: HYPOTHESIS (có judgment) ── -->
+  <div class="card">
+    <div class="card-eyebrow">Hypothesis — Viết ra trước khi verify</div>
+
+    <!-- FIELD 1: Problem -->
+    <div class="field">
+      <label class="field-label">Tôi nghĩ họ đang gặp vấn đề:</label>
+      <p class="field-hint">Cụ thể nhất có thể — không phải "họ cần training", mà là "họ đang có X người mới onboard mỗi tháng nhưng chưa có content chuẩn"</p>
+      <textarea class="tall" id="f-problem" placeholder="VD: Họ vừa scale team nhanh, content onboarding đang là Word doc cũ — mỗi manager phải tự giải thích lại, mất ~3h/người mới..."></textarea>
+      <div class="judgment" id="j-problem">
+        <div class="judgment-loading"><div class="spinner"></div> Đang phân tích...</div>
+      </div>
+    </div>
+
+    <!-- FIELD 2: Offer -->
+    <div class="field">
+      <label class="field-label">Tôi nghĩ offer phù hợp nhất với họ là:</label>
+      <textarea id="f-offer" placeholder="VD: Demo 1 module onboarding animation ngắn — show được ROI theo giờ tiết kiệm được..."></textarea>
+      <div class="judgment" id="j-offer">
+        <div class="judgment-loading"><div class="spinner"></div> Đang phân tích...</div>
+      </div>
+    </div>
+
+    <!-- FIELD 3: Signal -->
+    <div class="field">
+      <label class="field-label">Signal / evidence tôi có để support hypothesis này:</label>
+      <p class="field-hint">Nếu không có signal → đây là assumption cần test, không phải fact</p>
+      <textarea class="tall" id="f-signal" placeholder="VD: LinkedIn họ post về 'scaling culture' + job posting có 'L&D specialist' → đang build team training..."></textarea>
+      <div class="judgment" id="j-signal">
+        <div class="judgment-loading"><div class="spinner"></div> Đang phân tích...</div>
+      </div>
+    </div>
+
+    <!-- FIELD 4: Assumption -->
+    <div class="field">
+      <label class="field-label">Phần nào tôi assume mà KHÔNG có evidence?</label>
+      <p class="field-hint">Quan trọng nhất — viết thật, không che</p>
+      <textarea class="tall" id="f-assumption" placeholder="VD: Tôi assume budget họ có vì họ đang hiring, nhưng thực ra không biết priority của họ là gì..."></textarea>
+      <div class="judgment" id="j-assumption">
+        <div class="judgment-loading"><div class="spinner"></div> Đang phân tích...</div>
+      </div>
+    </div>
+
+    <div class="ai-challenge">
+      <div class="ai-challenge-label">AI Challenge</div>
+      <p>Phần assumption chưa có evidence thường là chỗ offer bị reject. Trước khi gửi — có cách nào tìm thêm 1 signal nhỏ để confirm hoặc deny assumption này không? VD: Xem recent post, check job description, tìm interview/podcast của họ...</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: CONFIDENCE CHECK ── -->
+  <div class="card">
+    <div class="card-eyebrow">Confidence Check</div>
+
+    <div class="field">
+      <label class="field-label">Tôi tự tin bao nhiêu % về hypothesis này?</label>
+      <p class="field-hint">1 = đoán mò, 5 = có evidence rõ ràng</p>
+      <div class="score-grid">
+        <button class="score-btn" onclick="selectScore(this,1)"><span class="score-num">1</span><span class="score-desc">Đoán mò</span></button>
+        <button class="score-btn" onclick="selectScore(this,2)"><span class="score-num">2</span><span class="score-desc">Hơi có cơ sở</span></button>
+        <button class="score-btn" onclick="selectScore(this,3)"><span class="score-num">3</span><span class="score-desc">Reasonable</span></button>
+        <button class="score-btn" onclick="selectScore(this,4)"><span class="score-num">4</span><span class="score-desc">Khá chắc</span></button>
+        <button class="score-btn" onclick="selectScore(this,5)"><span class="score-num">5</span><span class="score-desc">Có evidence</span></button>
+      </div>
+      <p class="score-feedback" id="score-feedback"></p>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Nếu hypothesis này sai — email sẽ bị reject vì lý do gì?</label>
+      <p class="field-hint">Viết ra worst case trước — giúp bạn viết email hedge đúng chỗ</p>
+      <textarea placeholder="VD: Nếu họ đã có vendor rồi, offer sẽ không relevant. Nếu budget frozen, timing sai..."></textarea>
+    </div>
+  </div>
+
+  <!-- ── SEND BAR ── -->
+  <div class="send-bar">
+    <button class="btn-submit" id="btn-submit" onclick="handleSubmit()">
+      Nhận đánh giá từ AI →
+    </button>
+    <button class="btn-lark" id="btn-lark" onclick="sendToLark()" disabled>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      Gửi qua Lark
+    </button>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<script src="config.js"></script>
+<script>
+// ================================================================
+//  CHECKLIST PROMPTS — tùy chỉnh tại đây
+//  Mỗi field có 1 system prompt riêng.
+//  Trả về JSON theo format bên dưới để render đúng.
+// ================================================================
+const PROMPTS = {
+
+  problem: `Bạn là một senior sales coach. Đánh giá phần "Problem hypothesis" của một cold outreach.
+
+Checklist cần kiểm tra (đánh giá từng tiêu chí):
+1. Có số liệu cụ thể không? (VD: X người, Y giờ, Z tháng)
+2. Vấn đề có cụ thể cho 1 đối tượng không, hay vẫn còn chung chung?
+3. Có thể verify được vấn đề này từ bên ngoài không? (public signal)
+4. Vấn đề có đủ đau để khiến họ hành động không?
+
+Trả về JSON theo format sau (không có markdown, không có text ngoài JSON):
+{
+  "score": "X/4",
+  "items": [
+    { "status": "pass" | "fail" | "warn", "label": "Tên tiêu chí", "comment": "Nhận xét ngắn" }
+  ],
+  "summary": "1-2 câu tóm tắt và gợi ý cải thiện quan trọng nhất"
+}`,
+
+  offer: `Bạn là một senior sales coach. Đánh giá phần "Offer hypothesis" của một cold outreach.
+
+Checklist cần kiểm tra:
+1. Offer có gắn trực tiếp với vấn đề đã nêu không?
+2. Có ROI hoặc outcome cụ thể có thể đo được không?
+3. Offer có đủ nhỏ/an toàn để họ nói "yes" lần đầu không? (low commitment first step)
+4. Offer có differentiated so với generic vendor pitch không?
+
+Trả về JSON (không có markdown, không có text ngoài JSON):
+{
+  "score": "X/4",
+  "items": [
+    { "status": "pass" | "fail" | "warn", "label": "Tên tiêu chí", "comment": "Nhận xét ngắn" }
+  ],
+  "summary": "1-2 câu tóm tắt và gợi ý cải thiện quan trọng nhất"
+}`,
+
+  signal: `Bạn là một senior sales coach. Đánh giá phần "Signal / Evidence" của một cold outreach.
+
+Checklist cần kiểm tra:
+1. Có ít nhất 1 signal thực sự không? (không phải đoán)
+2. Signal có từ nguồn độc lập nhau không? (2 nguồn khác nhau tốt hơn 1)
+3. Signal có còn "tươi" không? (gần đây, không phải 1 năm trước)
+4. Signal có map trực tiếp đến vấn đề đã nêu không?
+
+Trả về JSON (không có markdown, không có text ngoài JSON):
+{
+  "score": "X/4",
+  "items": [
+    { "status": "pass" | "fail" | "warn", "label": "Tên tiêu chí", "comment": "Nhận xét ngắn" }
+  ],
+  "summary": "1-2 câu tóm tắt và gợi ý cải thiện quan trọng nhất"
+}`,
+
+  assumption: `Bạn là một senior sales coach. Đánh giá phần "Assumption chưa có evidence" của một cold outreach.
+
+Checklist cần kiểm tra:
+1. Người viết có thực sự honest liệt kê assumption không, hay đang che?
+2. Assumption có ảnh hưởng lớn đến khả năng thành công không?
+3. Có cách nào verify assumption này trước khi gửi không?
+4. Nếu assumption sai, có cách hedge trong email không?
+
+Trả về JSON (không có markdown, không có text ngoài JSON):
+{
+  "score": "X/4",
+  "items": [
+    { "status": "pass" | "fail" | "warn", "label": "Tên tiêu chí", "comment": "Nhận xét ngắn" }
+  ],
+  "summary": "1-2 câu tóm tắt và gợi ý cải thiện quan trọng nhất"
+}`
+
+};
+
+// ================================================================
+//  UI HELPERS
+// ================================================================
+const SCORE_MSG = {
+  1: "Score 1 — Dừng lại. Cần research thêm trước khi tiếp cận.",
+  2: "Score 2 — Có thể gửi nhưng frame là 'muốn tìm hiểu thêm', không phải pitch cứng.",
+  3: "Score 3 — Reasonable. Viết email với 1 câu hỏi xác nhận hypothesis trước.",
+  4: "Score 4 — Khá tốt. Proceed nhưng hedge phần assumption trong email.",
+  5: "Score 5 — Tốt. Proceed. Document lại signal này để dùng cho tệp tương tự.",
+};
+
+function toggleTag(el) { el.classList.toggle("active"); }
+
+function selectScore(el, score) {
+  document.querySelectorAll(".score-btn").forEach(b => b.classList.remove("active"));
+  el.classList.add("active");
+  document.getElementById("score-feedback").textContent = SCORE_MSG[score];
+}
+
+// ================================================================
+//  RENDER JUDGMENT
+// ================================================================
+function renderJudgment(boxEl, data) {
+  const iconMap = { pass: "✓", fail: "✗", warn: "⚠" };
+  const classMap = { pass: "j-pass", fail: "j-fail", warn: "j-warn" };
+
+  const items = data.items.map(item => `
+    <li>
+      <span class="j-icon ${classMap[item.status]}">${iconMap[item.status]}</span>
+      <span class="j-text"><strong>${item.label}</strong> — ${item.comment}</span>
+    </li>
+  `).join("");
+
+  boxEl.innerHTML = `
+    <div class="judgment-header">
+      <span class="judgment-label">AI Judgment</span>
+      <span class="judgment-score">${data.score}</span>
+    </div>
+    <ul class="judgment-list">${items}</ul>
+    <p class="judgment-summary">${data.summary}</p>
+  `;
+}
+
+function renderError(boxEl, msg) {
+  boxEl.innerHTML = `<p style="font-size:13px;color:#c06040;">${msg}</p>`;
+}
+
+// ================================================================
+//  OPENAI CALL
+// ================================================================
+async function callOpenAI(apiKey, systemPrompt, userContent) {
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: (typeof CONFIG !== "undefined" && CONFIG.OPENAI_MODEL) ? CONFIG.OPENAI_MODEL : "gpt-4o-mini",
+      max_completion_tokens: 600,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user",   content: userContent  }
+      ]
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `HTTP ${res.status}`);
+  }
+
+  const json = await res.json();
+  const raw = json.choices[0].message.content.trim();
+
+  // strip markdown code fences nếu model vẫn wrap
+  const cleaned = raw.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```\s*$/i, "").trim();
+  return JSON.parse(cleaned);
+}
+
+// ================================================================
+//  MAIN SUBMIT
+// ================================================================
+async function handleSubmit() {
+  const apiKey = (typeof CONFIG !== "undefined" && CONFIG.OPENAI_API_KEY) ? CONFIG.OPENAI_API_KEY : null;
+  if (!apiKey || apiKey === "sk-...") {
+    alert("Chưa có API key. Mở file config.js và thay 'sk-...' bằng key thật.");
+    return;
+  }
+
+  // Lấy giá trị 4 field
+  const fields = [
+    { id: "problem",    inputId: "f-problem",    judgeId: "j-problem"    },
+    { id: "offer",      inputId: "f-offer",      judgeId: "j-offer"      },
+    { id: "signal",     inputId: "f-signal",     judgeId: "j-signal"     },
+    { id: "assumption", inputId: "f-assumption", judgeId: "j-assumption" },
   ];
-  const IMAGES = [
-    'assets/hero-1.png','assets/hero-2.png','assets/hero-3.png',
-    'assets/hero-4.png','assets/hero-5.png','assets/hero-6.png'
-  ];
-  const vnDay = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' })).getDay();
-  const dayIdx = vnDay === 0 ? 5 : (vnDay - 1) % QUOTES.length;
-  document.getElementById('daily-quote').textContent = QUOTES[dayIdx];
-  document.querySelector('.hero-gif').style.backgroundImage = `url('${IMAGES[dayIdx]}')`;
 
-  const GITHUB_RAW = 'https://raw.githubusercontent.com/minhwuan1234/daily-update-task-process-pm/main/daily-tasks.json';
-  const WORKER_URL = 'https://daily-standup-proxy.minhwuan889.workers.dev';
-
-  const qs  = (id) => document.getElementById(id);
-  const uid = () => new URLSearchParams(location.search).get('userId');
-
-  function initPicker(pickerId, fillId, labelId) {
-    const picker = qs(pickerId), fill = qs(fillId), label = qs(labelId);
-    picker.querySelectorAll('.progress-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        picker.querySelectorAll('.progress-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const val = btn.dataset.val;
-        picker.dataset.value = val;
-        fill.style.width = val + '%';
-        label.textContent = val + '%';
-        if (val == 100) {
-          fill.style.background = 'linear-gradient(90deg, #4caf50, #81c784)';
-          label.style.color = '#4caf50';
-        } else if (val >= 60) {
-          fill.style.background = 'linear-gradient(90deg, #FF9333, #ffb347)';
-          label.style.color = '#FF9333';
-        } else {
-          fill.style.background = 'linear-gradient(90deg, #FE8A22, #ffb347)';
-          label.style.color = '#FE8A22';
-        }
-      });
-    });
+  // Kiểm tra có field nào được điền không
+  const filled = fields.filter(f => document.getElementById(f.inputId).value.trim());
+  if (filled.length === 0) {
+    alert("Hãy điền ít nhất 1 field trong phần Hypothesis.");
+    return;
   }
 
-  initPicker('picker1', 'fill1', 'label1');
-  initPicker('picker2', 'fill2', 'label2');
+  // Disable button
+  const btn = document.getElementById("btn-submit");
+  btn.disabled = true;
+  btn.textContent = "Đang phân tích...";
 
-  function showState(name) {
-    ['loading','error','success','form'].forEach(s => {
-      const el = qs(`state-${s}`);
-      if (!el) return;
-      el.style.display = (s === name) ? 'flex' : 'none';
-    });
-  }
+  // Show loading cho tất cả field có nội dung
+  filled.forEach(f => {
+    const box = document.getElementById(f.judgeId);
+    box.innerHTML = `<div class="judgment-loading"><div class="spinner"></div> Đang phân tích...</div>`;
+    box.classList.add("visible");
+  });
 
-  function fmtDate(iso) {
-    if (!iso) return '';
-    return new Date(iso).toLocaleDateString('vi-VN', { day:'2-digit', month:'2-digit' });
-  }
-
-  function todayLabel() {
-    return new Date().toLocaleDateString('vi-VN', { weekday:'long', day:'2-digit', month:'2-digit', year:'numeric' });
-  }
-
-  async function fetchTasksForUser(userId) {
-    const [dailyRes, membersRes] = await Promise.all([
-      fetch(`${GITHUB_RAW}?t=${Date.now()}`),
-      fetch('https://raw.githubusercontent.com/minhwuan1234/daily-update-task-process-pm/main/members.json?t=' + Date.now())
-    ]);
-    if (!dailyRes.ok) throw new Error(`GitHub fetch failed: ${dailyRes.status}`);
-    const daily = await dailyRes.json();
-    const members = membersRes.ok ? await membersRes.json() : {};
-    const idToName = Object.fromEntries(Object.entries(members).map(([name, id]) => [id, name]));
-    const memberName = idToName[userId];
-    if (!memberName) throw new Error(`Không tìm thấy tên cho userId: ${userId}`);
-    const member = (daily.members || []).find(m => m.member === memberName);
-    if (!member || !member.tasks?.length) return [];
-    return member.tasks.map((t, i) => ({
-      taskId: `${userId}-${i}`,
-      title: t.task,
-      dueDate: t.dueDate ? convertDueDate(t.dueDate) : null,
-      status: 'in_progress',
-      assignees: [{ userId }]
-    }));
-  }
-
-  function convertDueDate(str) {
-    if (!str) return null;
-    const parts = str.split('/');
-    if (parts.length < 2) return null;
-    const year = new Date().getFullYear();
-    return new Date(`${year}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}T00:00:00Z`).toISOString();
-  }
-
-  function fillForm(tasks) {
-    qs('today-label').textContent = todayLabel();
-    const t1 = tasks[0], t2 = tasks[1] || null;
-    qs('task1-title').value = t1.title || '';
-    if (t1.dueDate) qs('due1').textContent = `Due ${fmtDate(t1.dueDate)}`;
-    if (t2) {
-      qs('task2-title').value = t2.title || '';
-      if (t2.dueDate) qs('due2').textContent = `Due ${fmtDate(t2.dueDate)}`;
-      qs('group-task2').style.display = 'flex';
-      qs('group-prog2').style.display = 'flex';
-      qs('group-time2').style.display = 'flex';
-    }
-  }
-
-  async function handleSubmit() {
-    const hasTwoTasks = qs('group-task2').style.display !== 'none';
-    const prog1 = qs('picker1').dataset.value;
-    const prog2 = hasTwoTasks ? qs('picker2').dataset.value : null;
-    const time1 = qs('time-select1').value;
-    const time2 = hasTwoTasks ? qs('time-select2').value : null;
-    const message = qs('message').value.trim();
-
-    if (!prog1) { highlightPicker('picker1'); return; }
-    if (hasTwoTasks && !prog2) { highlightPicker('picker2'); return; }
-
-    const btn = qs('submit-btn');
-    btn.disabled = true;
-    btn.textContent = 'Đang gửi...';
-
-    const today = new Date().toISOString().split('T')[0];
-    const userId = uid();
-
-    const payload = {
-      userId,
-      submittedAt: new Date().toISOString(),
-      date: today,
-      tasks: [
-        { taskId: window._myTasks[0]?.taskId, title: window._myTasks[0]?.title, progress: prog1 + '%', timeSpent: time1 ? time1 + 'h' : '—' },
-        ...(hasTwoTasks ? [{ taskId: window._myTasks[1]?.taskId, title: window._myTasks[1]?.title, progress: prog2 + '%', timeSpent: time2 ? time2 + 'h' : '—' }] : [])
-      ],
-      message,
-    };
-
-    try {
-      await writeToGitHub(today, userId, payload);
-      showState('success');
-    } catch (err) {
-      btn.disabled = false;
-      btn.textContent = 'Submit';
-      alert(`❌ Gửi thất bại: ${err.message}`);
-    }
-  }
-
-  async function writeToGitHub(date, userId, payload) {
-    const res = await fetch(WORKER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || `Worker error ${res.status}`);
-    }
-  }
-
-  function highlightPicker(pickerId) {
-    const el = qs(pickerId);
-    el.classList.add('picker-error');
-    el.addEventListener('animationend', () => el.classList.remove('picker-error'), { once: true });
-  }
-
-  async function init() {
-    const userId = uid();
-    if (!userId) {
-      showState('error');
-      qs('error-msg').textContent = '❌ Link không hợp lệ — thiếu userId. Vui lòng dùng link được gửi qua Lark.';
-      return;
-    }
-    try {
-      const tasks = await fetchTasksForUser(userId);
-      if (!tasks.length) {
-        showState('error');
-        qs('error-msg').textContent = `Không tìm thấy task nào cho userId: ${userId}`;
-        return;
+  // Gọi song song: OpenAI judgments + n8n webhook
+  await Promise.allSettled([
+    // OpenAI: đánh giá từng field
+    ...filled.map(async (f) => {
+      const box   = document.getElementById(f.judgeId);
+      const value = document.getElementById(f.inputId).value.trim();
+      try {
+        const data = await callOpenAI(apiKey, PROMPTS[f.id], value);
+        renderJudgment(box, data);
+      } catch (err) {
+        renderError(box, `Lỗi: ${err.message}`);
       }
-      window._myTasks = tasks;
-      fillForm(tasks);
-      showState('form');
-    } catch (err) {
-      showState('error');
-      qs('error-msg').textContent = `❌ Lỗi khi tải data: ${err.message}`;
+    }),
+    // n8n: gửi 3 URLs để scrape
+    triggerN8N(),
+  ]);
+
+  // Re-enable button, unlock Lark button
+  btn.disabled = false;
+  btn.textContent = "Chạy lại đánh giá →";
+  document.getElementById("btn-lark").disabled = false;
+}
+
+// ================================================================
+//  COLLECT ALL DATA (form + judgments)
+// ================================================================
+function collectAll() {
+  // Segments
+  const activeTags = [...document.querySelectorAll(".tag.active")].map(t => t.textContent.trim());
+  const customSeg  = document.getElementById("segment-custom").value.trim();
+  const segment    = [...activeTags, ...(customSeg ? [customSeg] : [])].join(", ");
+
+  // Score
+  const activeScore = document.querySelector(".score-btn.active");
+
+  // Judgment texts
+  const getJudgment = (id) => {
+    const box = document.getElementById("j-" + id);
+    if (!box || !box.classList.contains("visible")) return null;
+    // extract plain text from rendered judgment
+    const items = [...box.querySelectorAll(".j-text")].map(el => el.innerText).join(" | ");
+    const summary = box.querySelector(".judgment-summary")?.innerText || "";
+    const score   = box.querySelector(".judgment-score")?.innerText || "";
+    return { score, items, summary };
+  };
+
+  return {
+    segment,
+    contactPoint:  document.getElementById("contact-point").value.trim(),
+    problem:       document.getElementById("f-problem").value.trim(),
+    offer:         document.getElementById("f-offer").value.trim(),
+    signal:        document.getElementById("f-signal").value.trim(),
+    assumption:    document.getElementById("f-assumption").value.trim(),
+    confidenceScore: activeScore ? activeScore.querySelector(".score-num")?.innerText : "—",
+    judgments: {
+      problem:    getJudgment("problem"),
+      offer:      getJudgment("offer"),
+      signal:     getJudgment("signal"),
+      assumption: getJudgment("assumption"),
     }
+  };
+}
+
+// ================================================================
+//  SEND TO LARK via Cloudflare Worker
+// ================================================================
+async function sendToLark() {
+  const workerUrl = (typeof CONFIG !== "undefined" && CONFIG.WORKER_URL) ? CONFIG.WORKER_URL : null;
+  if (!workerUrl || workerUrl === "https://your-worker.your-subdomain.workers.dev") {
+    showToast("Chưa có Worker URL. Điền WORKER_URL vào config.js", "error");
+    return;
   }
 
-  qs('submit-btn').addEventListener('click', handleSubmit);
-  init();
-  </script>
+  const btn = document.getElementById("btn-lark");
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spinner" style="border-color:#ffffff40;border-top-color:#fff"></div> Đang gửi...`;
 
+  const data = collectAll();
+
+  try {
+    const res = await fetch(workerUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    if (!res.ok) throw new Error("Worker trả về " + res.status);
+    showToast("✓ Đã gửi vào group Lark");
+  } catch (err) {
+    showToast("Lỗi: " + err.message, "error");
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Gửi qua Lark`;
+  }
+}
+
+// ================================================================
+//  TOAST
+// ================================================================
+function showToast(msg, type = "success") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast" + (type === "error" ? " error" : "") + " show";
+  setTimeout(() => { t.className = "toast"; }, 3500);
+}
+// ================================================================
+//  TRIGGER N8N — gửi 3 URLs để scrape
+// ================================================================
+async function triggerN8N() {
+  const webhookUrl = (typeof CONFIG !== "undefined" && CONFIG.N8N_WEBHOOK_URL)
+    ? CONFIG.N8N_WEBHOOK_URL : null;
+
+  if (!webhookUrl || webhookUrl === "https://your-n8n.com/webhook/...") {
+    console.warn("[n8n] Chưa có N8N_WEBHOOK_URL trong config.js — bỏ qua");
+    return;
+  }
+
+  const payload = {
+    website:    document.getElementById("src-website").value.trim()    || null,
+    li_company: document.getElementById("src-li-company").value.trim() || null,
+    li_person:  document.getElementById("src-li-person").value.trim()  || null,
+  };
+
+  // Bỏ qua nếu cả 3 đều trống
+  if (!payload.website && !payload.li_company && !payload.li_person) {
+    console.log("[n8n] Không có URL nào — bỏ qua");
+    return;
+  }
+
+  try {
+    const res = await fetch(webhookUrl, {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    console.log("[n8n] Triggered OK", payload);
+  } catch (err) {
+    console.warn("[n8n] Trigger failed:", err.message);
+    // Không alert user — n8n fail không block judgment flow
+  }
+}
+
+</script>
 </body>
 </html>
