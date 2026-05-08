@@ -881,51 +881,70 @@ async function triggerN8N() {
     return;
   }
 
-  const payload = {
+  const sources = {
     website:    document.getElementById("src-website").value.trim()    || null,
     li_company: document.getElementById("src-li-company").value.trim() || null,
     li_person:  document.getElementById("src-li-person").value.trim()  || null,
   };
 
   // Bỏ qua nếu cả 3 đều trống
-  if (!payload.website && !payload.li_company && !payload.li_person) {
+  if (!sources.website && !sources.li_company && !sources.li_person) {
     console.log("[n8n] Không có URL nào — bỏ qua");
     return;
   }
 
-  // Show loading indicator trên các field
-  showAIAnswerLoading(true);
+  // Gom toàn bộ form data + judgment để gửi lên n8n
+  const activeScore = document.querySelector(".score-btn.active");
+  const payload = {
+    // Research sources
+    sources,
 
-  try {
-    const res = await fetch(webhookUrl, {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify(payload),
-      signal:  AbortSignal.timeout(60000), // timeout 60s
-    });
-    if (!res.ok) throw new Error("HTTP " + res.status);
+    // Form data của user
+    form: {
+      segment:      [...document.querySelectorAll(".tag.active")].map(t => t.textContent.trim()).join(", "),
+      contact_point: document.getElementById("contact-point").value.trim(),
+      problem:      document.getElementById("f-problem").value.trim(),
+      offer:        document.getElementById("f-offer").value.trim(),
+      signal:       document.getElementById("f-signal").value.trim(),
+      assumption:   document.getElementById("f-assumption").value.trim(),
+      confidence:   activeScore ? activeScore.querySelector(".score-num")?.innerText : null,
+      reject_reason: document.getElementById("f-reject") ? document.getElementById("f-reject").value.trim() : "",
+    },
 
-    const json = await res.json();
-    console.log("[n8n] Response:", json);
-
-    console.log("[n8n] Raw response:", JSON.stringify(json));
-
-    // Handle cả 2 format: {success, data} hoặc thẳng object
-    const aiData = json.success ? json.data : json;
-
-    if (aiData && aiData.problem) {
-      fillAIAnswers(aiData);
-      showToast("✓ AI đã phân tích xong — xem kết quả bên dưới");
-    } else {
-      console.error("[n8n] Unexpected format:", json);
-      throw new Error("Response không đúng format — xem Console");
+    // Judgment từ AI (nếu đã chạy)
+    judgments: {
+      problem:    getJudgmentText("j-problem"),
+      offer:      getJudgmentText("j-offer"),
+      signal:     getJudgmentText("j-signal"),
+      assumption: getJudgmentText("j-assumption"),
     }
-  } catch (err) {
+  };
+
+  // FIRE & FORGET — không chờ response
+  showToast("Đang gửi sang n8n để research...");
+  fetch(webhookUrl, {
+    method:  "POST",
+    headers: { "Content-Type": "application/json" },
+    body:    JSON.stringify(payload),
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    console.log("[n8n] Triggered OK — n8n sẽ gửi kết quả vào Lark");
+  })
+  .catch(err => {
     console.warn("[n8n] Trigger failed:", err.message);
     showToast("n8n lỗi: " + err.message, "error");
-  } finally {
-    showAIAnswerLoading(false);
-  }
+  });
+}
+
+// Lấy text từ judgment box
+function getJudgmentText(id) {
+  const box = document.getElementById(id);
+  if (!box || !box.classList.contains("visible")) return null;
+  const score   = box.querySelector(".judgment-score")?.innerText || "";
+  const items   = [...box.querySelectorAll(".j-text")].map(el => el.innerText).join(" | ");
+  const summary = box.querySelector(".judgment-summary")?.innerText || "";
+  return { score, items, summary };
 }
 
 // ── Hiện loading skeleton trên các field ──
