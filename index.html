@@ -782,14 +782,7 @@ async function handleSubmit() {
 
 // ── Push form + judgment lên GitHub ──
 async function pushFormJudgmentToGitHub() {
-  const pat = (typeof CONFIG !== "undefined") ? CONFIG.PAT_TOKEN : null;
-  const repo = "minhwuan1234/BD-Hypothesis-Checker";
-
-  if (!pat || pat === "your-pat-token" || pat === "__PAT_TOKEN__" || pat.startsWith("__")) {
-    console.warn("[GitHub] PAT_TOKEN chưa được inject — bỏ qua");
-    return;
-  }
-  console.log("[GitHub] PAT_TOKEN OK, length:", pat.length);
+  const workerUrl = "https://gh-proxy.minhwuan889.workers.dev/push-judgment";
 
   const activeScore = document.querySelector(".score-btn.active");
   const payload = {
@@ -813,48 +806,18 @@ async function pushFormJudgmentToGitHub() {
   };
 
   try {
-    // Lấy SHA của file hiện tại (cần để update)
-    const shaRes = await fetch(`https://api.github.com/repos/${repo}/contents/data/form-judgment.json`, {
-      headers: { "Authorization": `Bearer ${pat}`, "Accept": "application/vnd.github+json" }
-    });
-    const shaData = shaRes.ok ? await shaRes.json() : null;
-    const sha = shaData?.sha || null;
-
-    // Push file lên GitHub
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
-    const body = {
-      message: "update form-judgment",
-      content,
-      ...(sha ? { sha } : {})
-    };
-
-    await fetch(`https://api.github.com/repos/${repo}/contents/data/form-judgment.json`, {
-      method: "PUT",
-      headers: {
-        "Authorization": `Bearer ${pat}`,
-        "Accept": "application/vnd.github+json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(body)
-    });
-
-    showToast("✓ Đã gửi form + judgment lên GitHub");
-    console.log("[GitHub] form-judgment.json updated");
-
-    // Trigger GitHub Actions để gửi Lark
-    await fetch(`https://api.github.com/repos/${repo}/actions/workflows/send-lark.yml/dispatches`, {
+    const res = await fetch(workerUrl, {
       method: "POST",
-      headers: {
-        "Authorization": `Bearer ${pat}`,
-        "Accept": "application/vnd.github+json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ ref: "main" })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
-    console.log("[GitHub] Actions triggered");
 
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    showToast("✓ Đã gửi form + judgment — Lark sẽ nhận card trong giây lát");
+    console.log("[Worker] push-judgment OK");
   } catch (err) {
-    console.warn("[GitHub] Push failed:", err.message);
+    console.warn("[Worker] Failed:", err.message);
+    showToast("Lỗi gửi GitHub: " + err.message, "error");
   }
 }
 
