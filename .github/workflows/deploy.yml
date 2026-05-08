@@ -1,77 +1,40 @@
-name: Send Judgment Card to Lark
+name: Deploy to GitHub Pages
 
 on:
   push:
-    paths:
-      - 'data/form-judgment.json'
+    branches:
+      - main
 
 jobs:
-  send:
+  deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get Lark Token
-        id: token
+      - name: Inject secrets into index.html
         run: |
-          RESPONSE=$(curl -s -X POST "https://open.larksuite.com/open-apis/auth/v3/tenant_access_token/internal" \
-            -H "Content-Type: application/json" \
-            -d "{\"app_id\":\"${{ secrets.LARK_APP_ID }}\",\"app_secret\":\"${{ secrets.LARK_APP_SECRET }}\"}")
-          TOKEN=$(echo $RESPONSE | python3 -c "import sys,json; print(json.load(sys.stdin)['tenant_access_token'])")
-          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+          sed -i "s|__OPENAI_API_KEY__|${{ secrets.OPENAI_API_KEY }}|g" index.html
+          sed -i "s|__N8N_WEBHOOK_URL__|${{ secrets.N8N_WEBHOOK_URL }}|g" index.html
+          sed -i "s|__PAT_TOKEN__|${{ secrets.PAT_TOKEN }}|g" index.html
 
-      - name: Send Judgment Card to Lark
-        run: |
-          python3 << 'PYEOF'
-          import json, urllib.request
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
-          with open('data/form-judgment.json') as f:
-            data = json.load(f)
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./
 
-          form = data.get('form', {})
-          judgments = data.get('judgments', {})
-
-          def jtext(field):
-            jd = judgments.get(field)
-            if not jd: return '_Chưa có đánh giá_'
-            return f"**{jd.get('score','')}** — {jd.get('summary','')}"
-
-          elements = [
-            {"tag": "markdown", "content": "## 📋 Hypothesis Card — Judgment"},
-            {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Segment:** {form.get('segment','—')}\n**Contact:** {form.get('contact_point','—')}\n**Confidence:** {form.get('confidence','—')}/5"},
-            {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Vấn đề họ gặp:**\n{form.get('problem','—')}\n\n🤖 {jtext('problem')}"},
-            {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Offer:**\n{form.get('offer','—')}\n\n🤖 {jtext('offer')}"},
-            {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Signal / Evidence:**\n{form.get('signal','—')}\n\n🤖 {jtext('signal')}"},
-            {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Assumption:**\n{form.get('assumption','—')}\n\n🤖 {jtext('assumption')}"},
-            {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Worst case reject:**\n{form.get('reject_reason','—')}"},
-          ]
-
-          card = json.dumps({
-            "schema": "2.0",
-            "body": {"direction": "vertical", "elements": elements}
-          })
-
-          payload = json.dumps({
-            "receive_id": "${{ secrets.LARK_CHAT_ID }}",
-            "msg_type": "interactive",
-            "content": card
-          }).encode()
-
-          req = urllib.request.Request(
-            "https://open.larksuite.com/open-apis/im/v1/messages?receive_id_type=chat_id",
-            data=payload,
-            headers={
-              "Authorization": "Bearer ${{ steps.token.outputs.token }}",
-              "Content-Type": "application/json"
-            }
-          )
-          res = urllib.request.urlopen(req).read().decode()
-          print("Card sent:", res)
-          PYEOF
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
