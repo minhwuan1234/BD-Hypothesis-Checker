@@ -781,7 +781,10 @@ async function handleSubmit() {
 }
 
 // ── Push form + judgment lên GitHub ──
+let _pushing = false;
 async function pushFormJudgmentToGitHub() {
+  if (_pushing) { console.log("[Worker] Already pushing — skip"); return; }
+  _pushing = true;
   const workerUrl = "https://gh-proxy.minhwuan889.workers.dev/push-judgment";
 
   const activeScore = document.querySelector(".score-btn.active");
@@ -818,6 +821,8 @@ async function pushFormJudgmentToGitHub() {
   } catch (err) {
     console.warn("[Worker] Failed:", err.message);
     showToast("Lỗi gửi GitHub: " + err.message, "error");
+  } finally {
+    setTimeout(() => { _pushing = false; }, 5000);
   }
 }
 
