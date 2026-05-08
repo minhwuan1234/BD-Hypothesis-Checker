@@ -1,35 +1,35 @@
 {
   "form": {
-    "segment": "Startup founder",
-    "contact_point": "Head of L&D tại công ty chị Liu",
-    "problem": "training chưa hiệu quả, người học không thật sự hiểu được mình cần thay đổi hay củng cố hành vi gì sau khi học",
-    "offer": "Demo 1 module ngắn với learning design chi tiết",
-    "signal": "họ có comment trên linkedin về nỗi đau training chưa hiệu quả",
-    "assumption": "tôi assume là training chưa hiệu quả là do chưa có learning design",
+    "segment": "",
+    "contact_point": "1",
+    "problem": "1",
+    "offer": "1",
+    "signal": "1",
+    "assumption": "1",
     "confidence": "4",
     "reject_reason": ""
   },
   "judgments": {
     "problem": {
       "score": "1/4",
-      "items": "Có số liệu cụ thể không? — Không có số liệu cụ thể để hỗ trợ cho vấn đề được nêu ra. | Vấn đề có cụ thể cho 1 đối tượng không? — Vấn đề được đưa ra quá chung chung và không xác định rõ đối tượng cụ thể. | Có thể verify được vấn đề này từ bên ngoài không? — Có thể tìm kiếm thông tin về vấn đề đào tạo, nhưng không có cách nào cụ thể để xác minh từ phần nội dung. | Vấn đề có đủ đau để khiến họ hành động không? — Không có đủ độ cấp bách hoặc đau đớn để thúc đẩy hành động từ đối tượng.",
-      "summary": "Phần 'Problem hypothesis' cần cụ thể hơn với số liệu và đối tượng rõ ràng hơn. Xem xét cách tạo ra những trường hợp cấp bách để khuyến khích hành động từ người nhận."
+      "items": "Số liệu cụ thể — Không có số liệu cụ thể nào được cung cấp. | Cụ thể cho đối tượng — Vấn đề được nêu ra vẫn còn chung chung, chưa nhắm vào đối tượng cụ thể. | Verify từ bên ngoài — Không có dấu hiệu công khai nào để xác nhận vấn đề. | Đủ đau để hành động — Vấn đề không đủ nghiêm trọng để thúc đẩy hành động từ đối tượng.",
+      "summary": "Phần 'Problem hypothesis' cần bổ sung dữ liệu cụ thể và nhắm tới đối tượng rõ ràng hơn. Tìm kiếm thông tin từ nguồn công khai để xác minh và làm cho vấn đề trở nên kém đau hơn cần thiết."
     },
     "offer": {
-      "score": "2/4",
-      "items": "Offer gắn với vấn đề — Offer đưa ra liên kết rõ ràng với vấn đề đã nêu. | Có ROI hoặc outcome đo được — Thiếu thông tin cụ thể về ROI hoặc kết quả có thể đo được. | Offer nhỏ an toàn để nói 'yes' — Offer có thể cần điều chỉnh để giảm bớt cam kết ban đầu. | Differentiated so với generic vendor pitch — Offer nghe có vẻ giống như nhiều pitch khác trên thị trường.",
-      "summary": "Offer cần cải thiện về thông tin ROI cụ thể và tạo sự khác biệt để nổi bật hơn so với đối thủ. Hãy xem xét việc cung cấp một bước đi nhỏ hơn và an toàn hơn cho khách hàng."
+      "score": "1/4",
+      "items": "Gắn kết với vấn đề — Offer không rõ ràng liên kết với vấn đề cụ thể đã nêu. | ROI hoặc outcome — Thiếu thông tin về ROI hoặc kết quả cụ thể có thể đo được. | Low commitment first step — Offer không đủ nhỏ hoặc an toàn để khách hàng dễ dàng đồng ý. | Differentiation — Offer không có gì nổi bật so với các đề xuất của nhà cung cấp khác.",
+      "summary": "Offer cần phải rõ ràng hơn về việc giải quyết vấn đề cụ thể và phải có các yếu tố khác biệt để thu hút sự chú ý. Cần cân nhắc việc tạo ra một bước đầu tiên với cam kết thấp hơn cho khách hàng."
     },
     "signal": {
-      "score": "3/4",
-      "items": "Signal thực sự — Có một comment rõ ràng chỉ ra vấn đề đào tạo. | Nguồn độc lập — Chỉ có một nguồn duy nhất là comment trên LinkedIn. | Signal tươi — Comment này có thể là gần đây, nhưng cần kiểm tra thời gian chính xác. | Signal map đến vấn đề — Signal này trực tiếp liên quan đến vấn đề đã nêu.",
-      "summary": "Có một signal tốt nhưng cần thêm nguồn độc lập để củng cố giá trị. Cần tìm thêm thông tin từ các nguồn khác để tạo độ tin cậy cao hơn."
+      "score": "0/4",
+      "items": "Có ít nhất 1 signal thực sự không? — Không có signal rõ ràng được cung cấp. | Signal có từ nguồn độc lập nhau không? — Chưa có bất kỳ nguồn nào được đề cập. | Signal có còn 'tươi' không? — Thông tin cung cấp không có ngày tháng. | Signal có map trực tiếp đến vấn đề đã nêu không? — Không có signal nào được liên kết với vấn đề.",
+      "summary": "Tín hiệu không được xác định trong cold outreach. Cần phải phân tích kỹ lưỡng để thu thập thông tin cụ thể và đáng tin cậy hơn về khách hàng mục tiêu."
     },
     "assumption": {
-      "score": "2/4",
-      "items": "Người viết có thực sự honest liệt kê assumption không — Người viết đã liệt kê assumption một cách trực quan. | Assumption có ảnh hưởng lớn đến khả năng thành công không — Giả định này có thể không đúng và nếu sai có thể dẫn đến kết quả không như mong đợi. | Có cách nào verify assumption này trước khi gửi không — Có thể cần thêm thông tin để xác nhận giả định này trước khi gửi. | Nếu assumption sai, có cách hedge trong email không — Nếu giả định sai, email sẽ không linh hoạt để điều chỉnh hướng đi.",
-      "summary": "Giả định này có thể gây rủi ro lớn cho cold outreach nếu không được xác minh. Nên xem xét cách xác nhận giả định và chuẩn bị hedge trước khi gửi email."
+      "score": "1/4",
+      "items": "Honesty in Listing Assumptions — Người viết không liệt kê rõ ràng những giả định mà họ đang sử dụng. | Impact of Assumptions — Giả định có thể ảnh hưởng lớn đến khả năng thành công nhưng không được đề cập. | Verification of Assumptions — Không có cách nào rõ ràng để xác minh giả định trước khi gửi. | Hedging Against Incorrect Assumptions — Không có phương án hedge nào trong email nếu giả định sai.",
+      "summary": "Cần cải thiện việc liệt kê và minh bạch các giả định, cũng như tìm cách kiểm chứng trước khi gửi. Điều này sẽ giúp tăng khả năng thành công của outreach."
     }
   },
-  "timestamp": "2026-05-08T09:54:35.922Z"
+  "timestamp": "2026-05-08T10:04:29.892Z"
 }
