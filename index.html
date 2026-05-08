@@ -908,11 +908,17 @@ async function triggerN8N() {
     const json = await res.json();
     console.log("[n8n] Response:", json);
 
-    if (json.success && json.data) {
-      fillAIAnswers(json.data);
+    console.log("[n8n] Raw response:", JSON.stringify(json));
+
+    // Handle cả 2 format: {success, data} hoặc thẳng object
+    const aiData = json.success ? json.data : json;
+
+    if (aiData && aiData.problem) {
+      fillAIAnswers(aiData);
       showToast("✓ AI đã phân tích xong — xem kết quả bên dưới");
     } else {
-      throw new Error("Response không đúng format");
+      console.error("[n8n] Unexpected format:", json);
+      throw new Error("Response không đúng format — xem Console");
     }
   } catch (err) {
     console.warn("[n8n] Trigger failed:", err.message);
