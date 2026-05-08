@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'data/form-judgment.json'
+  workflow_dispatch:
 
 jobs:
   send:
