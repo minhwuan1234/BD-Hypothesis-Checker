@@ -301,6 +301,32 @@
     .score-btn.active .score-desc { color: var(--accent-on); }
     .score-feedback { font-size: 12.5px; color: var(--muted); min-height: 20px; }
 
+    /* ── AI ANSWER BOX (song song với judgment) ── */
+    .ai-answer {
+      display: none;
+      margin-top: 10px;
+      background: #101814;
+      border: 1px solid #1a2e1e;
+      border-left: 2px solid #2a6e3a;
+      border-radius: 8px;
+      padding: 12px 14px;
+      animation: fadeSlide .2s ease;
+    }
+    .ai-answer__label {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: #3a9e50;
+      margin-bottom: 6px;
+    }
+    .ai-answer__text {
+      font-size: 13px;
+      color: #8abf96;
+      line-height: 1.65;
+    }
+
     /* ── SUBMIT ── */
     .btn-submit {
       width: 100%;
@@ -441,6 +467,7 @@
       <div class="judgment" id="j-problem">
         <div class="judgment-loading"><div class="spinner"></div> Đang phân tích...</div>
       </div>
+      <div class="ai-answer" id="ai-answer-problem"></div>
     </div>
 
     <!-- FIELD 2: Offer -->
@@ -450,6 +477,7 @@
       <div class="judgment" id="j-offer">
         <div class="judgment-loading"><div class="spinner"></div> Đang phân tích...</div>
       </div>
+      <div class="ai-answer" id="ai-answer-offer"></div>
     </div>
 
     <!-- FIELD 3: Signal -->
@@ -460,6 +488,7 @@
       <div class="judgment" id="j-signal">
         <div class="judgment-loading"><div class="spinner"></div> Đang phân tích...</div>
       </div>
+      <div class="ai-answer" id="ai-answer-signal"></div>
     </div>
 
     <!-- FIELD 4: Assumption -->
@@ -470,6 +499,7 @@
       <div class="judgment" id="j-assumption">
         <div class="judgment-loading"><div class="spinner"></div> Đang phân tích...</div>
       </div>
+      <div class="ai-answer" id="ai-answer-assumption"></div>
     </div>
 
     <div class="ai-challenge">
@@ -863,20 +893,116 @@ async function triggerN8N() {
     return;
   }
 
+  // Show loading indicator trên các field
+  showAIAnswerLoading(true);
+
   try {
     const res = await fetch(webhookUrl, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify(payload),
+      signal:  AbortSignal.timeout(60000), // timeout 60s
     });
     if (!res.ok) throw new Error("HTTP " + res.status);
-    console.log("[n8n] Triggered OK", payload);
-    showToast("✓ Đã gửi webhook sang n8n");
+
+    const json = await res.json();
+    console.log("[n8n] Response:", json);
+
+    if (json.success && json.data) {
+      fillAIAnswers(json.data);
+      showToast("✓ AI đã phân tích xong — xem kết quả bên dưới");
+    } else {
+      throw new Error("Response không đúng format");
+    }
   } catch (err) {
     console.warn("[n8n] Trigger failed:", err.message);
-    showToast("n8n lỗi: " + err.message + " — Kiểm tra CORS trong n8n", "error");
-    // Không alert user — n8n fail không block judgment flow
+    showToast("n8n lỗi: " + err.message, "error");
+  } finally {
+    showAIAnswerLoading(false);
   }
+}
+
+// ── Hiện loading skeleton trên các field ──
+function showAIAnswerLoading(isLoading) {
+  const fields = ["problem", "offer", "signal", "assumption"];
+  fields.forEach(id => {
+    const box = document.getElementById("ai-answer-" + id);
+    if (!box) return;
+    if (isLoading) {
+      box.style.display = "block";
+      box.innerHTML = `<div class="ai-answer__label">AI Research</div>
+        <div class="loading-pulse" style="color:var(--dim);font-size:13px;font-style:italic;">Đang phân tích dữ liệu...</div>`;
+    } else {
+      if (box.querySelector(".loading-pulse")) box.style.display = "none";
+    }
+  });
+}
+
+// ── Điền câu trả lời AI vào form ──
+function fillAIAnswers(data) {
+  const map = {
+    problem:    "f-problem",
+    offer:      "f-offer",
+    signal:     "f-signal",
+    assumption: "f-assumption",
+  };
+
+  // Điền vào các textarea (chỉ nếu đang trống)
+  Object.entries(map).forEach(([key, inputId]) => {
+    if (!data[key]) return;
+    const input = document.getElementById(inputId);
+    if (input && !input.value.trim()) {
+      input.value = data[key];
+      input.style.borderColor = "var(--ai-border)";
+    }
+    // Hiện AI answer box song song
+    renderAIAnswer(key, data[key]);
+  });
+
+  // Điền segment tags
+  if (data.segment) {
+    document.querySelectorAll(".tag").forEach(tag => {
+      if (tag.textContent.trim().toLowerCase().includes(data.segment.toLowerCase())) {
+        tag.classList.add("active");
+      }
+    });
+  }
+
+  // Điền contact point
+  if (data.contact_point) {
+    const cp = document.getElementById("contact-point");
+    if (cp && !cp.value.trim()) cp.value = data.contact_point;
+  }
+
+  // Điền confidence score
+  if (data.confidence_score) {
+    const scoreBtn = document.querySelector(`.score-btn[data-score="${data.confidence_score}"]`);
+    if (scoreBtn) selectScore(scoreBtn, parseInt(data.confidence_score));
+  }
+
+  // Điền reject reason
+  if (data.reject_reason) {
+    const rr = document.getElementById("f-reject");
+    if (rr && !rr.value.trim()) rr.value = data.reject_reason;
+  }
+}
+
+// ── Render AI answer box song song bên dưới field ──
+function renderAIAnswer(fieldId, text) {
+  const box = document.getElementById("ai-answer-" + fieldId);
+  if (!box) return;
+  box.style.display = "block";
+  box.innerHTML = `
+    <div class="ai-answer__label">AI Research</div>
+    <div class="ai-answer__text">${escapeHtml(text)}</div>
+  `;
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
 
 </script>
