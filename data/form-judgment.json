@@ -1,35 +1,35 @@
 {
   "form": {
     "segment": "",
-    "contact_point": "",
+    "contact_point": "1",
     "problem": "1",
     "offer": "1",
     "signal": "1",
     "assumption": "1",
-    "confidence": "3",
+    "confidence": "4",
     "reject_reason": ""
   },
   "judgments": {
     "problem": {
       "score": "1/4",
-      "items": "Có số liệu cụ thể không? — Không có số liệu cụ thể về số lượng người, thời gian hay tháng. | Vấn đề có cụ thể cho 1 đối tượng không, hay vẫn còn chung chung? — Vấn đề vẫn còn quá chung chung và không nhắm vào đối tượng cụ thể. | Có thể verify được vấn đề này từ bên ngoài không? — Vấn đề không có thông tin đủ để xác minh từ các nguồn bên ngoài. | Vấn đề có đủ đau để khiến họ hành động không? — Vấn đề chưa đủ cấp bách để khiến đối tượng cảm thấy cần hành động.",
-      "summary": "Phần 'Problem hypothesis' cần cải thiện nhiều để rõ ràng và hấp dẫn hơn. Cần bổ sung số liệu cụ thể, làm rõ đối tượng mục tiêu và tạo ra cảm giác cấp bách cho vấn đề."
+      "items": "Có số liệu cụ thể không? — Không có số liệu cụ thể nào được đưa ra. | Vấn đề có cụ thể cho 1 đối tượng không? — Vấn đề vẫn còn chung chung, không xác định đối tượng cụ thể. | Có thể verify được vấn đề này từ bên ngoài không? — Không có thông tin từ nguồn công khai để xác minh. | Vấn đề có đủ đau để khiến họ hành động không? — Vấn đề không đủ nghiêm trọng để kích thích hành động.",
+      "summary": "Phần 'Problem hypothesis' cần được cải thiện đáng kể để có sức thuyết phục hơn. Cần bổ sung số liệu cụ thể, xác định đối tượng mục tiêu và chứng minh độ nghiêm trọng của vấn đề để tạo động lực cho hành động."
     },
     "offer": {
       "score": "1/4",
-      "items": "Offer gắn trực tiếp với vấn đề — Offer không rõ ràng và không liên quan đến vấn đề cụ thể đã nêu. | ROI hoặc outcome cụ thể — Không có thông tin về ROI hoặc outcome có thể đo được để định hướng cho người nhận. | Offer đủ nhỏ/an toàn — Offer có thể là một bước nhỏ để khách hàng nói 'yes' lần đầu. | Differentiated offer — Offer không nổi bật so với các pitch của nhà cung cấp chung.",
-      "summary": "Offer cần phải xác định rõ ràng mối liên hệ với vấn đề của khách hàng và đưa ra ROI cụ thể hơn. Nên làm nổi bật điểm khác biệt của sản phẩm để thu hút sự chú ý."
+      "items": "Gắn kết Offer với vấn đề — Offer không rõ ràng mối liên hệ với vấn đề đã nêu. | ROI hoặc outcome cụ thể — Không có thông tin về ROI hay kết quả cụ thể nào. | Nhỏ/an toàn để nói 'yes' — Offer có thể mời gọi nhưng chưa đủ để giảm bớt rủi ro cho khách hàng. | Diện mạo khác biệt — Nội dung giống như những đề xuất của nhà cung cấp thông thường.",
+      "summary": "Cần cải thiện cách gắn kết offer với vấn đề cụ thể mà khách hàng đang gặp phải. Hãy xem xét đưa ra ROI rõ ràng và làm cho offer trở nên hấp dẫn hơn để khách hàng dễ dàng đồng ý."
     },
     "signal": {
       "score": "0/4",
-      "items": "Có ít nhất 1 signal thực sự không? — Không có signal nào rõ ràng. | Signal có từ nguồn độc lập nhau không? — Chưa có nguồn độc lập nào được đưa ra. | Signal có còn 'tươi' không? — Không có thông tin về độ tươi của signal. | Signal có map trực tiếp đến vấn đề đã nêu không? — Không có sự kết nối nào được trình bày.",
-      "summary": "Phần 'Signal / Evidence' cần được cải thiện đáng kể bằng việc cung cấp ít nhất một signal rõ ràng và từ những nguồn độc lập. Cần chú ý đến tính thời sự và sự liên quan giữa signal và vấn đề đã nêu."
+      "items": "Signal thực sự — Không có signal thực sự nào được đề cập. | Nguồn độc lập — Không có nguồn nào được cung cấp. | Tính tươi của signal — Không có signal nào để đánh giá tính tươi. | Map đến vấn đề — Không có vấn đề nào được nêu rõ liên quan đến signal.",
+      "summary": "Cần tìm và chỉ ra ít nhất một signal thực sự từ nguồn độc lập, đảm bảo rằng nó là gần đây và liên quan trực tiếp đến vấn đề mà bạn đang giải quyết."
     },
     "assumption": {
-      "score": "1/4",
-      "items": "Người viết có thực sự honest liệt kê assumption không, hay đang che? — Có vẻ như người viết không hoàn toàn trung thực về các giả định. | Assumption có ảnh hưởng lớn đến khả năng thành công không? — Giả định có thể ảnh hưởng nghiêm trọng đến khả năng thành công. | Có cách nào verify assumption này trước khi gửi không? — Không có phương pháp nào để xác minh giả định trước khi gửi email. | Nếu assumption sai, có cách hedge trong email không? — Không có bất kỳ biện pháp nào để bảo vệ nếu giả định sai.",
-      "summary": "Có nhiều thiếu sót trong việc xác định và xử lý các giả định. Người viết nên cân nhắc rõ ràng hơn về giả định của mình và tìm cách xác minh tính đúng đắn của chúng trước khi gửi email."
+      "score": "0/4",
+      "items": "Thực sự honest liệt kê assumption — Người viết không minh bạch trong việc liệt kê các assumption. | Ảnh hưởng lớn đến khả năng thành công — Các assumption có thể ảnh hưởng nghiêm trọng đến tỷ lệ thành công. | Cách verify assumption — Không có bằng chứng hoặc phương pháp nào để xác minh giả thuyết trước khi gửi. | Cách hedge trong email — Không có chiến lược nào để giảm thiểu rủi ro nếu assumption sai.",
+      "summary": "Cần phải rõ ràng hơn trong việc liệt kê và kiểm tra các giả thuyết trước khi gửi email. Gợi ý tạo ra cách xác minh assumption trước khi tiếp cận khách hàng."
     }
   },
-  "timestamp": "2026-05-08T09:41:50.753Z"
+  "timestamp": "2026-05-08T09:50:05.622Z"
 }
