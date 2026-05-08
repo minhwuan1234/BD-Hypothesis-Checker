@@ -36,10 +36,13 @@ jobs:
           def jtext(field):
             jd = judgments.get(field)
             if not jd: return '_Chưa có đánh giá_'
-            return f"**{jd.get('score','')}** — {jd.get('summary','')}"
+            score = jd.get('score', '')
+            summary = jd.get('summary', '')
+            items = jd.get('items', '')
+            return f"**{score}**\n{items}\n_{summary}_"
 
           elements = [
-            {"tag": "markdown", "content": "## 📋 Hypothesis Card — Judgment"},
+            {"tag": "markdown", "content": "## 📋 Hypothesis Card — Form + Judgment"},
             {"tag": "hr"},
             {"tag": "markdown", "content": f"**Segment:** {form.get('segment','—')}\n**Contact:** {form.get('contact_point','—')}\n**Confidence:** {form.get('confidence','—')}/5"},
             {"tag": "hr"},
