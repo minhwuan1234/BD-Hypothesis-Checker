@@ -839,6 +839,19 @@ async function pushFormJudgmentToGitHub() {
 
     showToast("✓ Đã gửi form + judgment lên GitHub");
     console.log("[GitHub] form-judgment.json updated");
+
+    // Trigger GitHub Actions để gửi Lark
+    await fetch(`https://api.github.com/repos/${repo}/actions/workflows/send-lark.yml/dispatches`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${pat}`,
+        "Accept": "application/vnd.github+json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ ref: "main" })
+    });
+    console.log("[GitHub] Actions triggered");
+
   } catch (err) {
     console.warn("[GitHub] Push failed:", err.message);
   }
