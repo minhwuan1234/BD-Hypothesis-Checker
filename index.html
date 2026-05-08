@@ -556,6 +556,7 @@ const CONFIG = {
   OPENAI_MODEL:    "gpt-4o-mini",
   WORKER_URL:      "",
   N8N_WEBHOOK_URL: "__N8N_WEBHOOK_URL__",
+  PAT_TOKEN:       "__PAT_TOKEN__",
 };
 </script>
 <script>
@@ -774,6 +775,73 @@ async function handleSubmit() {
   btn.disabled = false;
   btn.textContent = "Chạy lại đánh giá →";
   document.getElementById("btn-lark").disabled = false;
+
+  // Sau khi judgment xong → gửi form + judgment lên GitHub
+  await pushFormJudgmentToGitHub();
+}
+
+// ── Push form + judgment lên GitHub ──
+async function pushFormJudgmentToGitHub() {
+  const pat = (typeof CONFIG !== "undefined") ? CONFIG.PAT_TOKEN : null;
+  const repo = "minhwuan1234/BD-Hypothesis-Checker";
+
+  if (!pat || pat === "your-pat-token") {
+    console.warn("[GitHub] Chưa có PAT_TOKEN trong config.js");
+    return;
+  }
+
+  const activeScore = document.querySelector(".score-btn.active");
+  const payload = {
+    form: {
+      segment:       [...document.querySelectorAll(".tag.active")].map(t => t.textContent.trim()).join(", "),
+      contact_point: document.getElementById("contact-point").value.trim(),
+      problem:       document.getElementById("f-problem").value.trim(),
+      offer:         document.getElementById("f-offer").value.trim(),
+      signal:        document.getElementById("f-signal").value.trim(),
+      assumption:    document.getElementById("f-assumption").value.trim(),
+      confidence:    activeScore ? activeScore.querySelector(".score-num")?.innerText : null,
+      reject_reason: document.getElementById("f-reject") ? document.getElementById("f-reject").value.trim() : "",
+    },
+    judgments: {
+      problem:    getJudgmentText("j-problem"),
+      offer:      getJudgmentText("j-offer"),
+      signal:     getJudgmentText("j-signal"),
+      assumption: getJudgmentText("j-assumption"),
+    },
+    timestamp: new Date().toISOString(),
+  };
+
+  try {
+    // Lấy SHA của file hiện tại (cần để update)
+    const shaRes = await fetch(`https://api.github.com/repos/${repo}/contents/data/form-judgment.json`, {
+      headers: { "Authorization": `Bearer ${pat}`, "Accept": "application/vnd.github+json" }
+    });
+    const shaData = shaRes.ok ? await shaRes.json() : null;
+    const sha = shaData?.sha || null;
+
+    // Push file lên GitHub
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+    const body = {
+      message: "update form-judgment",
+      content,
+      ...(sha ? { sha } : {})
+    };
+
+    await fetch(`https://api.github.com/repos/${repo}/contents/data/form-judgment.json`, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${pat}`,
+        "Accept": "application/vnd.github+json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    showToast("✓ Đã gửi form + judgment lên GitHub");
+    console.log("[GitHub] form-judgment.json updated");
+  } catch (err) {
+    console.warn("[GitHub] Push failed:", err.message);
+  }
 }
 
 // ================================================================
