@@ -553,10 +553,10 @@
 // KHÔNG sửa trực tiếp file này — sửa qua GitHub Secrets
 const CONFIG = {
   OPENAI_API_KEY:  "__OPENAI_API_KEY__",
-  OPENAI_MODEL:    "gpt-5.5",
+  OPENAI_MODEL:    "gpt-4o-mini",
   WORKER_URL:      "",
   N8N_WEBHOOK_URL: "__N8N_WEBHOOK_URL__",
-  PAT_TOKEN:       "PAT_TOKEN",
+  PAT_TOKEN:       "__PAT_TOKEN__",
 };
 </script>
 <script>
@@ -785,10 +785,11 @@ async function pushFormJudgmentToGitHub() {
   const pat = (typeof CONFIG !== "undefined") ? CONFIG.PAT_TOKEN : null;
   const repo = "minhwuan1234/BD-Hypothesis-Checker";
 
-  if (!pat || pat === "your-pat-token") {
-    console.warn("[GitHub] Chưa có PAT_TOKEN trong config.js");
+  if (!pat || pat === "your-pat-token" || pat === "__PAT_TOKEN__" || pat.startsWith("__")) {
+    console.warn("[GitHub] PAT_TOKEN chưa được inject — bỏ qua");
     return;
   }
+  console.log("[GitHub] PAT_TOKEN OK, length:", pat.length);
 
   const activeScore = document.querySelector(".score-btn.active");
   const payload = {
