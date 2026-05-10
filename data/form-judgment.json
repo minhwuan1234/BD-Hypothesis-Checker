@@ -12,24 +12,24 @@
   "judgments": {
     "problem": {
       "score": "1/4",
-      "items": "Có số liệu cụ thể không? — Không có số liệu cụ thể để hỗ trợ cho vấn đề. | Vấn đề có cụ thể cho 1 đối tượng không? — Vấn đề vẫn còn chung chung và không rõ ràng đối với đối tượng cụ thể. | Có thể verify được vấn đề này từ bên ngoài không? — Không có thông tin bên ngoài nào để xác nhận vấn đề. | Vấn đề có đủ đau để khiến họ hành động không? — Vấn đề chưa được diễn đạt rõ ràng về mức độ nghiêm trọng.",
-      "summary": "Các tiêu chí về số liệu và tính cụ thể đều chưa đạt yêu cầu. Cần cải thiện việc cung cấp số liệu cụ thể, xác định đối tượng rõ ràng và làm nổi bật tầm quan trọng của vấn đề."
+      "items": "Có số liệu cụ thể không? — Không có số liệu cụ thể nào được cung cấp. | Vấn đề có cụ thể cho 1 đối tượng không? — Vấn đề vẫn còn chung chung, không xác định được đối tượng cụ thể. | Có thể verify được vấn đề này từ bên ngoài không? — Không có bằng chứng từ bên ngoài để xác nhận vấn đề. | Vấn đề có đủ đau để khiến họ hành động không? — Vấn đề không được trình bày đủ mức độ nghiêm trọng để kích thích hành động.",
+      "summary": "Phần 'Problem hypothesis' cần được làm rõ hơn với số liệu cụ thể và thông tin chi tiết về đối tượng. Cung cấp thông tin mà có thể được xác thực bên ngoài và nhấn mạnh tính cấp thiết của vấn đề sẽ cải thiện lớn khả năng tiếp cận."
     },
     "offer": {
-      "score": "1/4",
-      "items": "Gắn kết với vấn đề — Offer không liên quan trực tiếp đến vấn đề đã nêu. | ROI hoặc outcome — Không có thông tin cụ thể về ROI hoặc outcome đo được. | Low commitment first step — Offer không đủ nhỏ hoặc an toàn để khách hàng dễ dàng đồng ý. | Differentiation — Offer có phần giống với pitch thông thường của nhà cung cấp.",
-      "summary": "Offer cần phải được điều chỉnh để gắn kết hơn với vấn đề của khách hàng và đưa ra các chỉ số ROI rõ ràng. Hãy xem xét việc làm cho offer hấp dẫn hơn với bước cam kết thấp hơn."
+      "score": "0/4",
+      "items": "Gắn kết với vấn đề — Không thấy sự liên kết rõ ràng giữa offer và vấn đề đã nêu. | ROI hoặc outcome cụ thể — Thiếu thông tin về ROI hoặc kết quả có thể đo lường. | Low commitment first step — Offer không đủ nhỏ hoặc an toàn để khuyến khích sự đồng ý ban đầu. | Differentiated — Offer có vẻ chung chung và không nổi bật so với cácpitch của nhà cung cấp khác.",
+      "summary": "Offer cần cải thiện đáng kể để tạo được sự kết nối và thu hút sự quan tâm từ khách hàng tiềm năng. Đề xuất nên làm rõ vấn đề cụ thể mà offer giải quyết và cung cấp thông tin về ROI."
     },
     "signal": {
-      "score": "0/4",
-      "items": "Có ít nhất 1 signal thực sự không? — Không có signal nào được nêu. | Signal có từ nguồn độc lập nhau không? — Không có nguồn nào được đề cập. | Signal có còn 'tươi' không? — Không có signal để đánh giá độ tươi. | Signal có map trực tiếp đến vấn đề đã nêu không? — Không có signal nào liên quan đến vấn đề.",
-      "summary": "Phần 'Signal / Evidence' hoàn toàn thiếu sót. Hãy bổ sung ít nhất 1 signal từ nguồn độc lập và đảm bảo nó liên quan đến vấn đề được đề cập."
+      "score": "1/4",
+      "items": "Có ít nhất 1 signal thực sự không? — Có 1 signal duy nhất. | Signal có từ nguồn độc lập nhau không? — Signal không đến từ 2 nguồn khác nhau. | Signal có còn 'tươi' không? — Không rõ signal có gần đây hay không. | Signal có map trực tiếp đến vấn đề đã nêu không? — Signal không liên quan trực tiếp đến vấn đề đã giới thiệu.",
+      "summary": "Phần 'Signal / Evidence' cần cải thiện rõ ràng. Hãy tìm thêm source độc lập và đảm bảo rằng signal liên quan mới nhất tới vấn đề mà bạn đã nêu."
     },
     "assumption": {
       "score": "1/4",
-      "items": "Honesty in listing assumptions — Người viết không minh bạch về các assumption có thể có, có vẻ đang che đậy. | Impact of assumptions on success — Các assumption này có thể ảnh hưởng lớn đến khả năng thành công của chiến dịch. | Verification of assumptions — Không có cách nào rõ ràng để xác minh các assumption trước khi gửi. | Hedging in email — Nếu assumption sai, không thấy cách nào để bảo vệ trong email.",
-      "summary": "Email cần cải thiện mạnh mẽ để tăng tính minh bạch và khả năng thành công. Nên liệt kê rõ các assumption và có phương pháp xác minh chúng trước khi gửi."
+      "items": "Thành thật liệt kê assumption — Người viết có dấu hiệu che giấu thông tin. | Ảnh hưởng đến khả năng thành công — Assumption ảnh hưởng lớn đến quyết định của người nhận. | Verify assumption — Có thể tìm hiểu thêm qua các nguồn bên ngoài trước khi gửi. | Cách hedge trong email — Không có chiến lược hedging để bảo vệ nếu assumption sai.",
+      "summary": "Cần lược bỏ những assumption không cần thiết và minh bạch hơn trong cold outreach. Nên có cách hedge rõ ràng để chuẩn bị cho khả năng assumption sai."
     }
   },
-  "timestamp": "2026-05-10T14:59:17.167Z"
+  "timestamp": "2026-05-10T15:01:33.186Z"
 }
