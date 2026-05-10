@@ -10,6 +10,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check changed files
+        id: changes
+        run: |
+          echo "judgment=$(git diff --name-only HEAD~1 HEAD | grep -c 'data/form-judgment.json')" >> $GITHUB_OUTPUT
+          echo "research=$(git diff --name-only HEAD~1 HEAD | grep -c 'data/ai-research.json')" >> $GITHUB_OUTPUT
 
       - name: Get Lark Token
         id: token
@@ -21,7 +29,7 @@ jobs:
           echo "token=$TOKEN" >> $GITHUB_OUTPUT
 
       - name: Send Judgment Card to Lark
-        if: contains(github.event.commits[0].modified, 'data/form-judgment.json') || contains(github.event.commits[0].added, 'data/form-judgment.json')
+        if: steps.changes.outputs.judgment != '0'
         run: |
           python3 << 'PYEOF'
           import json, urllib.request
@@ -73,7 +81,7 @@ jobs:
           PYEOF
 
       - name: Send AI Research Card to Lark
-        if: contains(github.event.commits[0].modified, 'data/ai-research.json') || contains(github.event.commits[0].added, 'data/ai-research.json')
+        if: steps.changes.outputs.research != '0'
         run: |
           python3 << 'PYEOF'
           import json, urllib.request
