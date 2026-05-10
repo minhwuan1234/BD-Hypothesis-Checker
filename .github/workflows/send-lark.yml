@@ -1,10 +1,9 @@
 name: Send Judgment Card to Lark
-
 on:
   push:
     paths:
       - 'data/form-judgment.json'
-
+      - 'data/ai-research.json'
 jobs:
   send:
     runs-on: ubuntu-latest
@@ -22,16 +21,14 @@ jobs:
           echo "token=$TOKEN" >> $GITHUB_OUTPUT
 
       - name: Send Judgment Card to Lark
+        if: contains(github.event.commits[0].modified, 'data/form-judgment.json') || contains(github.event.commits[0].added, 'data/form-judgment.json')
         run: |
           python3 << 'PYEOF'
           import json, urllib.request
-
           with open('data/form-judgment.json') as f:
             data = json.load(f)
-
           form = data.get('form', {})
           judgments = data.get('judgments', {})
-
           def jtext(field):
             jd = judgments.get(field)
             if not jd: return '_Chưa có đánh giá_'
@@ -39,7 +36,6 @@ jobs:
             summary = jd.get('summary', '')
             items = jd.get('items', '')
             return f"**{score}**\n{items}\n_{summary}_"
-
           elements = [
             {"tag": "markdown", "content": "## 📋 Hypothesis Card — Form + Judgment"},
             {"tag": "hr"},
@@ -55,18 +51,15 @@ jobs:
             {"tag": "hr"},
             {"tag": "markdown", "content": f"**Worst case reject:**\n{form.get('reject_reason','—')}"},
           ]
-
           card = json.dumps({
             "schema": "2.0",
             "body": {"direction": "vertical", "elements": elements}
           })
-
           payload = json.dumps({
             "receive_id": "${{ secrets.LARK_CHAT_ID }}",
             "msg_type": "interactive",
             "content": card
           }).encode()
-
           req = urllib.request.Request(
             "https://open.larksuite.com/open-apis/im/v1/messages?receive_id_type=chat_id",
             data=payload,
@@ -76,5 +69,48 @@ jobs:
             }
           )
           res = urllib.request.urlopen(req).read().decode()
-          print("Card sent:", res)
+          print("Judgment Card sent:", res)
+          PYEOF
+
+      - name: Send AI Research Card to Lark
+        if: contains(github.event.commits[0].modified, 'data/ai-research.json') || contains(github.event.commits[0].added, 'data/ai-research.json')
+        run: |
+          python3 << 'PYEOF'
+          import json, urllib.request
+          with open('data/ai-research.json') as f:
+            data = json.load(f)
+          elements = [
+            {"tag": "markdown", "content": "## 🤖 AI Research Card — n8n Data"},
+            {"tag": "hr"},
+            {"tag": "markdown", "content": f"**Segment:** {data.get('segment','—')}\n**Contact:** {data.get('contact_point','—')}\n**Confidence:** {data.get('confidence_score','—')}/5"},
+            {"tag": "hr"},
+            {"tag": "markdown", "content": f"**Vấn đề họ gặp:**\n{data.get('problem','—')}"},
+            {"tag": "hr"},
+            {"tag": "markdown", "content": f"**Offer:**\n{data.get('offer','—')}"},
+            {"tag": "hr"},
+            {"tag": "markdown", "content": f"**Signal / Evidence:**\n{data.get('signal','—')}"},
+            {"tag": "hr"},
+            {"tag": "markdown", "content": f"**Assumption:**\n{data.get('assumption','—')}"},
+            {"tag": "hr"},
+            {"tag": "markdown", "content": f"**Worst case reject:**\n{data.get('reject_reason','—')}"},
+          ]
+          card = json.dumps({
+            "schema": "2.0",
+            "body": {"direction": "vertical", "elements": elements}
+          })
+          payload = json.dumps({
+            "receive_id": "${{ secrets.LARK_CHAT_ID }}",
+            "msg_type": "interactive",
+            "content": card
+          }).encode()
+          req = urllib.request.Request(
+            "https://open.larksuite.com/open-apis/im/v1/messages?receive_id_type=chat_id",
+            data=payload,
+            headers={
+              "Authorization": "Bearer ${{ steps.token.outputs.token }}",
+              "Content-Type": "application/json"
+            }
+          )
+          res = urllib.request.urlopen(req).read().decode()
+          print("AI Research Card sent:", res)
           PYEOF
