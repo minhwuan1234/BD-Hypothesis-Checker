@@ -1,10 +1,10 @@
 {
-  "problem": "Rural Health West cần thu hút, tuyển dụng và giữ chân đội ngũ y tế ở khu vực regional/rural/remote WA, đồng thời phải cung cấp đào tạo/professional development cho health professionals phân tán địa lý — nơi khoảng cách là rào cản vận hành thực tế.",
-  "offer": "Giải pháp phù hợp nhất là nền tảng/đối tác hỗ trợ đào tạo hybrid/online cho health professionals vùng xa: tổ chức webinar/workshop, quản lý đăng ký sự kiện, CPD tracking, tài liệu sau đào tạo và báo cáo engagement theo vùng. Offer nên gắn trực tiếp với mục tiêu giúp họ scale professional development 'closer to home' và giảm friction do khoảng cách địa lý.",
-  "signal": "Website nêu rõ: \"Distance is no obstacle\" và \"Supporting rural healthcare in Western Australia\". Họ cũng viết: \"We support rural health professionals through a diverse range of programs and services including professional development such as conferences and workshops\" và \"providing health professionals with the ability to up-skill closer to home.\" Ngoài ra có nhiều event hybrid/online như: \"Midwest-Gascoyne Health Professionals Network | ARF and RHD Overview | Carnarvon & Online\".",
-  "assumption": "Chưa có data LinkedIn cá nhân/công ty usable và không có post/job description, nên chưa verify được priority hiện tại, tech stack, ngân sách, hay người quyết định. Giả định chính là họ đang cần cải thiện/scaling delivery của training và engagement cho rural health professionals, dựa trên website và event footprint.",
-  "segment": "Training agency",
-  "contact_point": "Head of Professional Development / Education & Events Manager / Workforce Programs Manager / Recruitment Services Manager",
+  "problem": "SPITEX BASEL có mô hình vận hành chăm sóc tại nhà quy mô cao, phải phục vụ nhiều nhóm người dùng quanh năm và cần phối hợp dịch vụ tại nhà cho bệnh nhân/người thân. Pain point hợp lý nhất là áp lực điều phối lịch chăm sóc, nhân sự và dịch vụ để duy trì an toàn, chất lượng sống và giảm tải cho thân nhân.",
+  "offer": "Giải pháp điều phối vận hành chăm sóc tại nhà / workforce scheduling / care coordination giúp tối ưu phân bổ nhân viên, lịch thăm khám/chăm sóc, theo dõi ca chăm sóc và phối hợp với thân nhân/dịch vụ liên quan.",
+  "signal": "Website ghi rõ: “Das umfassende und spezialisierte Angebot der Hilfe und Pflege zu Hause für Menschen jeden Alters, 365 Tage im Jahr.” và “leistet Hilfe bei der Koordination von Dienstleistungen zu Hause.” Ngoài ra họ nhấn mạnh mục tiêu “Erhalt von Selbstständigkeit, Sicherheit und Lebensqualität sowie die Entlastung von Angehörigen.”",
+  "assumption": "Chưa có evidence về hệ thống điều phối hiện tại, số lượng nhân viên/ca chăm sóc, ngân sách, hoặc việc họ đang gặp lỗi vận hành cụ thể. Cần verify thêm qua người phụ trách operations/pflegeleitung.",
+  "segment": "Corporate",
+  "contact_point": "Head of Operations / Leitung Pflege / Leitung Spitex-Dienste / Geschäftsführer/in",
   "confidence_score": 3,
-  "reject_reason": "Email có thể bị reject nếu họ đã có sẵn hệ thống event/LMS/CPD ổn định, hoặc nếu pain chính hiện tại không phải delivery đào tạo mà là funding, chính sách y tế, hoặc recruitment supply. Cũng có thể sai nếu người tiếp cận không sở hữu ngân sách cho professional development hoặc digital learning."
+  "reject_reason": "Hypothesis có thể bị reject nếu họ đã có hệ thống điều phối nội bộ ổn định, không có pain về scheduling/coordination, hoặc quy trình mua sắm của tổ chức phi lợi nhuận theo Leistungsauftrag của Kantons Basel-Stadt khiến họ không ưu tiên giải pháp mới."
 }
