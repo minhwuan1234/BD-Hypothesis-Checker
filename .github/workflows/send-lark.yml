@@ -37,27 +37,49 @@ jobs:
             data = json.load(f)
           form = data.get('form', {})
           judgments = data.get('judgments', {})
-          def jtext(field):
+          timestamp = data.get('timestamp', '')[:10]
+
+          def score_bar(score_str):
+            try:
+              num, den = score_str.split('/')
+              filled = int(num)
+              total = int(den)
+              bar = '🟢' * filled + '⚪' * (total - filled)
+              return f"{bar} {score_str}"
+            except:
+              return score_str
+
+          def jblock(field):
             jd = judgments.get(field)
-            if not jd: return '_Chưa có đánh giá_'
-            score = jd.get('score', '')
+            if not jd:
+              return '_Chưa có đánh giá_'
+            score = score_bar(jd.get('score', ''))
+            items_raw = jd.get('items', '')
+            items_list = [i.strip() for i in items_raw.split('|') if i.strip()]
+            items_fmt = '\n'.join([f"• {i}" for i in items_list])
             summary = jd.get('summary', '')
-            items = jd.get('items', '')
-            return f"**{score}**\n{items}\n_{summary}_"
+            return f"**🤖 AI Judgment: {score}**\n{items_fmt}\n\n_{summary}_"
+
+          confidence = form.get('confidence', '—')
+          try:
+            conf_bar = '🟦' * int(confidence) + '⬜' * (5 - int(confidence))
+          except:
+            conf_bar = ''
+
           elements = [
-            {"tag": "markdown", "content": "## 📋 Hypothesis Card — Form + Judgment"},
+            {"tag": "markdown", "content": f"## 📋 Hypothesis Card — Form + Judgment\n_{timestamp}_"},
             {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Segment:** {form.get('segment','—')}\n**Contact:** {form.get('contact_point','—')}\n**Confidence:** {form.get('confidence','—')}/5"},
+            {"tag": "markdown", "content": f"🏷 **Segment:** {form.get('segment','—')}\n👤 **Contact:** {form.get('contact_point','—')}\n📊 **Confidence:** {conf_bar} {confidence}/5"},
             {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Vấn đề họ gặp:**\n{form.get('problem','—')}\n\n🤖 {jtext('problem')}"},
+            {"tag": "markdown", "content": f"### 🔍 Vấn đề họ gặp\n{form.get('problem','—')}\n\n{jblock('problem')}"},
             {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Offer:**\n{form.get('offer','—')}\n\n🤖 {jtext('offer')}"},
+            {"tag": "markdown", "content": f"### 🎯 Offer\n{form.get('offer','—')}\n\n{jblock('offer')}"},
             {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Signal / Evidence:**\n{form.get('signal','—')}\n\n🤖 {jtext('signal')}"},
+            {"tag": "markdown", "content": f"### 📡 Signal / Evidence\n{form.get('signal','—')}\n\n{jblock('signal')}"},
             {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Assumption:**\n{form.get('assumption','—')}\n\n🤖 {jtext('assumption')}"},
+            {"tag": "markdown", "content": f"### 🧠 Assumption\n{form.get('assumption','—')}\n\n{jblock('assumption')}"},
             {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Worst case reject:**\n{form.get('reject_reason','—')}"},
+            {"tag": "markdown", "content": f"### ⚠️ Worst case reject\n{form.get('reject_reason','—')}"},
           ]
           card = json.dumps({
             "schema": "2.0",
@@ -87,20 +109,27 @@ jobs:
           import json, urllib.request
           with open('data/ai-research.json') as f:
             data = json.load(f)
+
+          confidence = data.get('confidence_score', '—')
+          try:
+            conf_bar = '🟦' * int(confidence) + '⬜' * (5 - int(confidence))
+          except:
+            conf_bar = ''
+
           elements = [
             {"tag": "markdown", "content": "## 🤖 AI Research Card — n8n Data"},
             {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Segment:** {data.get('segment','—')}\n**Contact:** {data.get('contact_point','—')}\n**Confidence:** {data.get('confidence_score','—')}/5"},
+            {"tag": "markdown", "content": f"🏷 **Segment:** {data.get('segment','—')}\n👤 **Contact:** {data.get('contact_point','—')}\n📊 **Confidence:** {conf_bar} {confidence}/5"},
             {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Vấn đề họ gặp:**\n{data.get('problem','—')}"},
+            {"tag": "markdown", "content": f"### 🔍 Vấn đề họ gặp\n{data.get('problem','—')}"},
             {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Offer:**\n{data.get('offer','—')}"},
+            {"tag": "markdown", "content": f"### 🎯 Offer\n{data.get('offer','—')}"},
             {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Signal / Evidence:**\n{data.get('signal','—')}"},
+            {"tag": "markdown", "content": f"### 📡 Signal / Evidence\n{data.get('signal','—')}"},
             {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Assumption:**\n{data.get('assumption','—')}"},
+            {"tag": "markdown", "content": f"### 🧠 Assumption\n{data.get('assumption','—')}"},
             {"tag": "hr"},
-            {"tag": "markdown", "content": f"**Worst case reject:**\n{data.get('reject_reason','—')}"},
+            {"tag": "markdown", "content": f"### ⚠️ Worst case reject\n{data.get('reject_reason','—')}"},
           ]
           card = json.dumps({
             "schema": "2.0",
