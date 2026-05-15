@@ -1,35 +1,35 @@
 {
   "form": {
     "segment": "",
-    "contact_point": "1",
-    "problem": "1",
-    "offer": "1",
-    "signal": "1",
-    "assumption": "1",
-    "confidence": "5",
+    "contact_point": "",
+    "problem": "nhiều nhân viên & tuyển điều dưỡng liên tục -> ngành home care này điều dưỡng phải đến nhà bệnh nhân và làm việc 1 mình -> học viên phải đối mặt một mình với bệnh nhân trong môi trường khó đoán (nhà riêng) -> cần train tốt",
+    "offer": "scenario/simulation xử lý tình huống ở nhà -> build confidence, kỹ năng ra quyết định độc lập, giảm tgian handover",
+    "signal": "Đặc thù dịch vụ trên web cover nhiều bệnh khó care: Demenz, Psychiatrie, Palliativ.",
+    "assumption": "Assume rằng quá trình đào tạo hiện tại của họ đang theo cách shadowing \n* Assume rằng học viên trẻ might bị overwhelmed khi ra hiện trường thực tế.",
+    "confidence": "3",
     "reject_reason": ""
   },
   "judgments": {
     "problem": {
-      "score": "1/4",
-      "items": "Có số liệu cụ thể không? — Không có số liệu cụ thể để hỗ trợ vấn đề. | Vấn đề có cụ thể cho 1 đối tượng không? — Vấn đề còn chung chung và không nhắm đúng đối tượng cụ thể. | Có thể verify được vấn đề này từ bên ngoài không? — Không có bằng chứng công khai để xác nhận vấn đề. | Vấn đề có đủ đau để khiến họ hành động không? — Vấn đề không đủ cấp bách hoặc đau đớn để kích thích hành động.",
-      "summary": "Phần 'Problem hypothesis' cần cải thiện đáng kể về chiều sâu và sự cụ thể. Hãy thêm số liệu, định hình lại vấn đề cho một đối tượng cụ thể, và cung cấp bằng chứng bên ngoài để chứng minh tính hợp lệ."
+      "score": "2/4",
+      "items": "Vấn đề có dựa trên điều quan sát được không — Vấn đề tuyển điều dưỡng và làm việc trong môi trường khó đoán là có thật. | Vấn đề có đủ cụ thể không? — Cần mô tả rõ hơn về các khó khăn cụ thể mà nhân viên điều dưỡng gặp phải trong môi trường nhà riêng. | Vấn đề có đủ đau để khách muốn thay đổi không? — Cần chỉ ra hậu quả cụ thể từ việc không đào tạo bài bản cho nhân viên. | Có đang biến hoạt động bình thường của khách thành 'vấn đề' không? — Có thể gây cảm giác rằng việc làm việc một mình là chính nó đã là vấn đề, trong khi đó là thực tế ngành này.",
+      "summary": "Mô tả vấn đề cần cụ thể hóa hơn về các khó khăn cụ thể mà nhân viên điều dưỡng đối mặt, cũng như hậu quả của việc thiếu đào tạo. Cần tránh biến các hoạt động bình thường thành vấn đề."
     },
     "offer": {
-      "score": "1/4",
-      "items": "Gắn trực tiếp với vấn đề — Offer chưa liên kết rõ ràng với vấn đề đã nêu. | ROI hoặc outcome cụ thể — Không có thông tin về ROI hoặc kết quả đo được. | Low commitment first step — Offer đủ nhỏ để họ có thể nói 'yes' lần đầu. | Differentiated so với vendor pitch — Offer vẫn quá chung chung và không nổi bật hơn so với đối thủ.",
-      "summary": "Offer cần làm rõ sự liên kết với vấn đề cụ thể và cung cấp thông tin về ROI. Hãy tập trung vào việc tạo ra một gợi ý độc đáo và cụ thể hơn để thu hút sự chú ý của khách hàng."
+      "score": "4/4",
+      "items": "Offer có gắn trực tiếp với vấn đề đã nêu không? — Offer tập trung vào việc xây dựng sự tự tin và kỹ năng ra quyết định, phù hợp với mục tiêu đã nêu. | Offer có đủ nhỏ/dễ thử để khách không cần cam kết lớn ngay không? — Offer được thiết kế để dễ dàng thử nghiệm mà không yêu cầu cam kết quá lớn từ phía khách hàng. | Offer có add-on vào thứ khách đang có, thay vì bắt họ bỏ cái cũ không? — Offer có thể được tích hợp vào quy trình hiện tại của khách hàng mà không cần thay đổi lớn. | Framing có phù hợp với loại khách đang target không? — Framing của offer phù hợp với nhu cầu và đặc điểm của đối tượng mục tiêu như agency, PM, hay senior leader.",
+      "summary": "Offer rất tốt, gắn liền với nhu cầu khách hàng và dễ dàng thử nghiệm. Cần tiếp tục duy trì sự linh hoạt trong thiết kế offer để đáp ứng nhu cầu thay đổi của khách hàng."
     },
     "signal": {
       "score": "1/4",
-      "items": "Có ít nhất 1 signal thực sự không? — Tìm thấy 1 signal. | Signal có từ nguồn độc lập nhau không? — Không có nguồn độc lập cho signal. | Signal có còn 'tươi' không? — Signal không còn gần đây. | Signal có map trực tiếp đến vấn đề đã nêu không? — Signal không liên quan rõ đến vấn đề.",
-      "summary": "Chỉ một signal được xác định nhưng thiếu tính xác thực và liên quan. Cần tìm kiếm nhiều nguồn độc lập hơn và đảm bảo signal là gần đây và liên quan đến vấn đề người nhận đang gặp phải."
+      "items": "Signal có phải hành vi/hoạt động quan sát được thực tế không? — Không có tín hiệu cụ thể nào được đề cập về hành vi hoặc hoạt động của khách hàng. | Signal có liên quan trực tiếp đến vấn đề và offer đã nêu không? — Không có thông tin cho thấy tín hiệu nào liên quan đến dịch vụ mà khách hàng có thể cần. | Signal có đủ gần đây không? — Không có tính toán cụ thể nào về sự gần đây của tín hiệu. | Người viết có thừa nhận rõ không? — Không có sự thừa nhận nào về việc thiếu tín hiệu rõ ràng.",
+      "summary": "Cần bổ sung thông tin cụ thể hơn về hành vi hoặc hoạt động quan sát được từ khách hàng liên quan đến dịch vụ. Tìm kiếm và ghi chú các dấu hiệu rõ ràng của nhu cầu khách hàng để hợp nhất với đề xuất dịch vụ."
     },
     "assumption": {
-      "score": "1/4",
-      "items": "Honesty in listing assumptions — Người viết không liệt kê rõ tất cả các assumption, có dấu hiệu che giấu. | Impact of assumptions on success — Assumption có thể ảnh hưởng lớn đến khả năng thành công nhưng không được làm rõ. | Verification of assumptions — Không có cách nào để xác minh assumption trước khi gửi email. | Hedging in case of wrong assumptions — Không có biện pháp phòng ngừa nào trong email nếu assumption sai.",
-      "summary": "Assumption trong cold outreach cần được xác định và trình bày một cách rõ ràng hơn. Gợi ý là nên thêm thông tin cụ thể và cách kiểm tra tính chính xác của các giả định trước khi gửi email."
+      "score": "2/4",
+      "items": "Liệt kê assumption — Người viết đã liệt kê rất rõ ràng những giả định của mình. | Assumption ảnh hưởng lớn đến quyết định — Cả hai giả định này ảnh hưởng lớn đến quyết định mua, nhưng không có thông tin rõ ràng về ngân sách hoặc người ra quyết định. | Cách verify assumption — Không đề xuất cách nào để xác minh những giả định này trước khi gửi email. | Hậu quả nếu assumption sai — Nếu giả định sai, email có thể không bị reject hoàn toàn, nhưng có thể khiến nội dung không phù hợp.",
+      "summary": "Người viết cần chú ý tới sự ảnh hưởng của các giả định đến quyết định của khách hàng và tìm cách xác minh chúng. Đưa ra các phương pháp để kiểm tra giả định trước khi gửi email cũng rất quan trọng."
     }
   },
-  "timestamp": "2026-05-11T02:14:59.040Z"
+  "timestamp": "2026-05-15T04:46:31.894Z"
 }
