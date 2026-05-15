@@ -800,7 +800,7 @@ let _pushing = false;
 async function pushFormJudgmentToGitHub() {
   if (_pushing) { console.log("[Worker] Already pushing — skip"); return; }
   _pushing = true;
-  const workerUrl = "https://gh-proxy.minhwuan889.workers.dev/push-judgment";
+  const workerUrl = "https://bd-hypothesis-checker.minhwuan889.workers.dev/push-judgment";
 
   const activeScore = document.querySelector(".score-btn.active");
   const payload = {
