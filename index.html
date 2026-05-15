@@ -695,7 +695,7 @@ async function callOpenAI(apiKey, systemPrompt, userContent) {
     },
     body: JSON.stringify({
       model: (typeof CONFIG !== "undefined" && CONFIG.OPENAI_MODEL) ? CONFIG.OPENAI_MODEL : "gpt-4o-mini",
-      max_completion_tokens: 1000,
+      max_completion_tokens: 1500,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user",   content: userContent  }
@@ -717,8 +717,14 @@ async function callOpenAI(apiKey, systemPrompt, userContent) {
   try {
     return JSON.parse(cleaned);
   } catch (e) {
-    console.error("[OpenAI] JSON parse failed. Raw response:", cleaned);
-    throw new Error("JSON parse failed: " + e.message + " | Raw: " + cleaned.substring(0, 200));
+    console.error("[OpenAI] JSON parse failed. Raw:", cleaned.substring(0, 300));
+    // Thử fix JSON bị cắt: thêm closing brace nếu thiếu
+    const fixed = cleaned.endsWith("}") ? cleaned : cleaned + '"}';
+    try {
+      return JSON.parse(fixed);
+    } catch(e2) {
+      throw new Error("JSON parse failed: " + cleaned.substring(0, 150));
+    }
   }
 }
 
@@ -782,7 +788,11 @@ async function handleSubmit() {
   // btn-lark removed
 
   // Sau khi judgment xong → gửi form + judgment lên GitHub
-  await pushFormJudgmentToGitHub();
+  try {
+    await pushFormJudgmentToGitHub();
+  } catch(e) {
+    console.warn("[GitHub] push error:", e.message);
+  }
 }
 
 // ── Push form + judgment lên GitHub ──
