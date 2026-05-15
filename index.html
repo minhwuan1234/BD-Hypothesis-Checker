@@ -428,9 +428,6 @@
       <input type="text" id="src-li-person" placeholder="https://linkedin.com/in/..." />
     </div>
 
-    <button class="btn-test-n8n" id="btn-test-n8n" onclick="testN8NOnly()">
-      Test gửi webhook →
-    </button>
   </div>
 
   <!-- ── SECTION 1: TARGET & CONTEXT ── -->
@@ -532,16 +529,10 @@
     </div>
   </div>
 
-  <!-- ── SEND BAR ── -->
-  <div class="send-bar">
-    <button class="btn-submit" id="btn-submit" onclick="handleSubmit()">
-      Nhận đánh giá từ AI →
-    </button>
-    <button class="btn-lark" id="btn-lark" onclick="sendToLark()" disabled>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      Gửi qua Lark
-    </button>
-  </div>
+  <!-- ── SUBMIT ── -->
+  <button class="btn-submit" id="btn-submit" onclick="handleSubmit()">
+    Nhận đánh giá từ AI →
+  </button>
 
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
@@ -553,7 +544,7 @@
 // KHÔNG sửa trực tiếp file này — sửa qua GitHub Secrets
 const CONFIG = {
   OPENAI_API_KEY:  "__OPENAI_API_KEY__",
-  OPENAI_MODEL:    "gpt-4o-mini",
+  OPENAI_MODEL:    "gpt-5.5",
   WORKER_URL:      "",
   N8N_WEBHOOK_URL: "__N8N_WEBHOOK_URL__",
   PAT_TOKEN:       "__PAT_TOKEN__",
@@ -567,15 +558,17 @@ const CONFIG = {
 // ================================================================
 const PROMPTS = {
 
-  problem: `Bạn là một senior sales coach. Đánh giá phần "Problem hypothesis" của một cold outreach.
+  problem: `Bạn là một senior BD coach. Đánh giá phần mô tả vấn đề khách hàng đang gặp.
 
-Checklist cần kiểm tra (đánh giá từng tiêu chí):
-1. Có số liệu cụ thể không? (VD: X người, Y giờ, Z tháng)
-2. Vấn đề có cụ thể cho 1 đối tượng không, hay vẫn còn chung chung?
-3. Có thể verify được vấn đề này từ bên ngoài không? (public signal)
-4. Vấn đề có đủ đau để khiến họ hành động không?
+Mục đích của field này: người viết phải chỉ ra được khách đang ở trạng thái nào và đang gặp bài toán gì — đủ cụ thể để biết có nên outreach không.
 
-Trả về JSON theo format sau (không có markdown, không có text ngoài JSON):
+Checklist:
+1. Vấn đề có dựa trên điều quan sát được không, hay đang tự bịa pain point?
+2. Vấn đề có đủ cụ thể không? (tránh "họ cần training" chung chung)
+3. Vấn đề có đủ đau để khách muốn thay đổi không?
+4. Có đang biến hoạt động bình thường của khách thành "vấn đề" không?
+
+Trả về JSON (không có markdown, không có text ngoài JSON):
 {
   "score": "X/4",
   "items": [
@@ -584,13 +577,15 @@ Trả về JSON theo format sau (không có markdown, không có text ngoài JSO
   "summary": "1-2 câu tóm tắt và gợi ý cải thiện quan trọng nhất"
 }`,
 
-  offer: `Bạn là một senior sales coach. Đánh giá phần "Offer hypothesis" của một cold outreach.
+  offer: `Bạn là một senior BD coach. Đánh giá phần offer đề xuất cho khách hàng.
 
-Checklist cần kiểm tra:
+Mục đích của field này: người viết phải chỉ ra được mình sẽ mang lại gì — đủ cụ thể, đủ dễ thử, phù hợp với khách.
+
+Checklist:
 1. Offer có gắn trực tiếp với vấn đề đã nêu không?
-2. Có ROI hoặc outcome cụ thể có thể đo được không?
-3. Offer có đủ nhỏ/an toàn để họ nói "yes" lần đầu không? (low commitment first step)
-4. Offer có differentiated so với generic vendor pitch không?
+2. Offer có đủ nhỏ/dễ thử để khách không cần cam kết lớn ngay không?
+3. Offer có add-on vào thứ khách đang có, thay vì bắt họ bỏ cái cũ không?
+4. Framing có phù hợp với loại khách đang target không? (agency, PM, senior leader...)
 
 Trả về JSON (không có markdown, không có text ngoài JSON):
 {
@@ -601,13 +596,15 @@ Trả về JSON (không có markdown, không có text ngoài JSON):
   "summary": "1-2 câu tóm tắt và gợi ý cải thiện quan trọng nhất"
 }`,
 
-  signal: `Bạn là một senior sales coach. Đánh giá phần "Signal / Evidence" của một cold outreach.
+  signal: `Bạn là một senior BD coach. Đánh giá phần signal/evidence người viết quan sát được từ khách.
 
-Checklist cần kiểm tra:
-1. Có ít nhất 1 signal thực sự không? (không phải đoán)
-2. Signal có từ nguồn độc lập nhau không? (2 nguồn khác nhau tốt hơn 1)
-3. Signal có còn "tươi" không? (gần đây, không phải 1 năm trước)
-4. Signal có map trực tiếp đến vấn đề đã nêu không?
+Mục đích của field này: người viết phải chỉ ra được lý do cụ thể để tin rằng khách có khả năng mua — không phải suy đoán từ profile.
+
+Checklist:
+1. Signal có phải hành vi/hoạt động quan sát được thực tế không? (không phải chỉ đúng industry/title)
+2. Signal có liên quan trực tiếp đến vấn đề và offer đã nêu không?
+3. Signal có đủ gần đây không?
+4. Nếu không có signal thật, người viết có thừa nhận rõ không?
 
 Trả về JSON (không có markdown, không có text ngoài JSON):
 {
@@ -618,13 +615,15 @@ Trả về JSON (không có markdown, không có text ngoài JSON):
   "summary": "1-2 câu tóm tắt và gợi ý cải thiện quan trọng nhất"
 }`,
 
-  assumption: `Bạn là một senior sales coach. Đánh giá phần "Assumption chưa có evidence" của một cold outreach.
+  assumption: `Bạn là một senior BD coach. Đánh giá phần assumption người viết chưa có evidence.
 
-Checklist cần kiểm tra:
-1. Người viết có thực sự honest liệt kê assumption không, hay đang che?
-2. Assumption có ảnh hưởng lớn đến khả năng thành công không?
-3. Có cách nào verify assumption này trước khi gửi không?
-4. Nếu assumption sai, có cách hedge trong email không?
+Mục đích của field này: người viết phải thành thật liệt kê những gì mình đang giả định — để biết chỗ nào dễ sai và cần hedge trong email.
+
+Checklist:
+1. Người viết có thật sự liệt kê assumption, hay đang che/bỏ qua phần chưa chắc?
+2. Assumption có ảnh hưởng lớn đến việc khách có mua không? (budget, decision maker, phase readiness)
+3. Có cách nào verify assumption này trước khi gửi email không?
+4. Nếu assumption sai, email có bị reject hoàn toàn không?
 
 Trả về JSON (không có markdown, không có text ngoài JSON):
 {
