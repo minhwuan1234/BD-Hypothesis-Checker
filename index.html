@@ -544,7 +544,7 @@
 // KHÔNG sửa trực tiếp file này — sửa qua GitHub Secrets
 const CONFIG = {
   OPENAI_API_KEY:  "__OPENAI_API_KEY__",
-  OPENAI_MODEL:    "gpt-5.5",
+  OPENAI_MODEL:    "gpt-4o-mini",
   WORKER_URL:      "",
   N8N_WEBHOOK_URL: "__N8N_WEBHOOK_URL__",
   PAT_TOKEN:       "__PAT_TOKEN__",
@@ -695,7 +695,7 @@ async function callOpenAI(apiKey, systemPrompt, userContent) {
     },
     body: JSON.stringify({
       model: (typeof CONFIG !== "undefined" && CONFIG.OPENAI_MODEL) ? CONFIG.OPENAI_MODEL : "gpt-4o-mini",
-      max_completion_tokens: 600,
+      max_completion_tokens: 1000,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user",   content: userContent  }
